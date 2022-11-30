@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 
 def clear():
@@ -7,14 +8,14 @@ def clear():
 
 class Player:
     def __init__(self):
-        self.location = None
+        self.location: Optional["Room"] = None  # TODO: see if I can stop the linter from warning here
         self.items = []
-        self.health = 50
-        self.alive = True
+        self.health: int = 50  # TODO: decide if this will always be an int
+        self.alive: bool = True
     # goes in specified direction if possible, returns True
     # if not possible returns False
 
-    def go_direction(self, direction):
+    def go_direction(self, direction: str):
         new_location = self.location.get_destination(direction.lower())
         if new_location is not None:
             self.location = new_location

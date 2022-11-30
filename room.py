@@ -3,9 +3,9 @@ import random
 
 class Room:
     def __init__(self, description):
-        self.desc = description
+        self.desc: str = description
         self.monsters = []
-        self.exits = []
+        self.exits: list[list[any]] = []  # TODO: change `any` to actual values
         self.items = []
 
     def add_exit(self, exit_name, destination):
