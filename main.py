@@ -7,6 +7,7 @@ import updater
 
 player = Player()
 
+
 def create_world():
     a = Room("You are in room 1")
     b = Room("You are in room 2")
@@ -21,8 +22,10 @@ def create_world():
     player.location = a
     Monster("Bob the monster", 20, b)
 
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
 
 def print_situation():
     clear()
@@ -42,6 +45,7 @@ def print_situation():
     for e in player.location.exit_names():
         print(e)
     print()
+
 
 def show_help():
     clear()
@@ -69,17 +73,17 @@ if __name__ == "__main__":
             if len(command_words) == 0:
                 continue
             match command_words[0].lower():
-                case "go":   #cannot handle multi-word directions
+                case "go":   # cannot handle multi-word directions
                     okay = player.go_direction(command_words[1]) 
                     if okay:
                         time_passes = True
                     else:
                         print("You can't go that way.")
                         command_success = False
-                case "pickup":  #can handle multi-word objects
-                    target_name = command[7:] # everything after "pickup "
+                case "pickup":  # can handle multi-word objects
+                    target_name = command[7:]  # everything after "pickup "
                     target = player.location.get_item_by_name(target_name)
-                    if target != False:
+                    if target is not False:
                         player.pickup(target)
                     else:
                         print("No such item.")
@@ -93,18 +97,16 @@ if __name__ == "__main__":
                 case "attack":
                     target_name = command[7:]
                     target = player.location.get_monster_by_name(target_name)
-                    if target != False:
+                    if target is not False:
                         player.attack_monster(target)
                     else:
                         print("No such monster.")
                         command_success = False
                 case other:
                     print("Not a valid command")
-                    command_success = False
-        if time_passes == True:
+                    command_success = False  # TODO: see if this is actually error-worthy or not
+        if time_passes is True:
             updater.update_all()
-
-
 
 # this is for git testing
 # another testing line
