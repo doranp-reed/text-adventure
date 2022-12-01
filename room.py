@@ -1,14 +1,12 @@
 import random
-from item import Item
-from monster import Monster  # TODO: decide on if I should actually have these imports (right now it's for the IDE)
 
 
 class Room:
     def __init__(self, description: str):
         self.desc: str = description
-        self.monsters: list[Monster] = []
+        self.monsters: list['Monster'] = []
         self.exits: list[list[str, 'Room']] = []
-        self.items: list[Item] = []
+        self.items: list['Item'] = []
 
     def add_exit(self, exit_name: str, destination: 'Room'):
         self.exits.append([exit_name, destination])
@@ -28,10 +26,10 @@ class Room:
     def exit_names(self):
         return [x[0] for x in self.exits]
 
-    def add_item(self, item: Item):
+    def add_item(self, item: 'Item'):
         self.items.append(item)
 
-    def remove_item(self, item: Item):
+    def remove_item(self, item: 'Item'):
         self.items.remove(item)
 
     def add_monster(self, monster: 'Monster'):

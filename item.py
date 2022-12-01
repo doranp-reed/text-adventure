@@ -1,5 +1,4 @@
 from clear import clear
-from room import Room
 from typing import Optional
 
 
@@ -7,7 +6,7 @@ class Item:
     def __init__(self, name, desc):
         self.name: str = name
         self.desc: str = desc
-        self.loc: Optional[Room] = None  # TODO: do I need quotes or no?
+        self.loc: Optional['Room | Player'] = None  # TODO: do I need quotes or no?
 
     def describe(self):
         clear()
@@ -15,6 +14,6 @@ class Item:
         print()
         input("Press enter to continue...")
     
-    def put_in_room(self, room: "Room"):
+    def put_in_room(self, room: 'Room'):
         self.loc = room
         room.add_item(self)

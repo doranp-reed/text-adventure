@@ -56,18 +56,23 @@ def show_help():
 if __name__ == "__main__":
     create_world()
     playing = True
+
     while playing and player.alive:
         print_situation()
         command_success = False
         time_passes = False
+
         while not command_success:
             command_success = True
             command = input("What now? ")
+
             if len(command) == 0:
                 continue
+
             command_words = command.split()
             if len(command_words) == 0:
                 continue
+
             match command_words[0].lower():
                 case "go":   # cannot handle multi-word directions
                     okay = player.go_direction(command_words[1]) 
@@ -76,6 +81,7 @@ if __name__ == "__main__":
                     else:
                         print("You can't go that way.")
                         command_success = False
+
                 case "pickup":  # can handle multi-word objects
                     target_name = command[7:]  # everything after "pickup "
                     target = player.location.get_item_by_name(target_name)
@@ -84,13 +90,17 @@ if __name__ == "__main__":
                     else:
                         print("No such item.")
                         command_success = False
+
                 case "inventory":
                     player.show_inventory()
+
                 case "help":
                     show_help()
-                case "exit":
+
+                case "quit":
                     playing = False
-                case "attack":
+
+                case "attack":  # TODO: add in description
                     target_name = command[7:]
                     target = player.location.get_monster_by_name(target_name)
                     if target is not False:
@@ -98,7 +108,8 @@ if __name__ == "__main__":
                     else:
                         print("No such monster.")
                         command_success = False
-                case other:
+                
+                case _:
                     print("Not a valid command")
                     command_success = False  # TODO: see if this is actually error-worthy or not
         if time_passes is True:
