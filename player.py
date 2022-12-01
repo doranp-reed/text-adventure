@@ -20,8 +20,19 @@ class Player:
 
     def pickup(self, item: 'Item'):
         self.items.append(item)
-        item.loc = self
+        item.location = self
         self.location.remove_item(item)
+
+    def get_item_by_name(self, name: str):
+        for i in self.items:
+            if i.name.lower() == name.lower():
+                return i
+            return False
+
+    def drop(self, item: 'Item'):  # TODO: implement error handling
+        self.items.remove(item)
+        item.location = self.location
+        self.location.add_item(item)
 
     def show_inventory(self):
         clear()
