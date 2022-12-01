@@ -6,9 +6,9 @@ def update_all():
         u.update()
 
 
-def register(thing):
+def register(thing: object):
     updates.append(thing)
 
 
-def deregister(thing):
+def deregister(thing: object):
     updates.remove(thing)

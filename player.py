@@ -9,12 +9,12 @@ def clear():
 class Player:
     def __init__(self):
         self.location: Optional["Room"] = None  # TODO: see if I can stop the linter from warning here
-        self.items = []
+        self.items: list['Item'] = []  # TODO: decide on if I need the quotes or not
         self.health: int = 50  # TODO: decide if this will always be an int
         self.alive: bool = True
+
     # goes in specified direction if possible, returns True
     # if not possible returns False
-
     def go_direction(self, direction: str):
         new_location = self.location.get_destination(direction.lower())
         if new_location is not None:
@@ -22,7 +22,7 @@ class Player:
             return True
         return False
 
-    def pickup(self, item):
+    def pickup(self, item: 'Item'):
         self.items.append(item)
         item.loc = self
         self.location.remove_item(item)
@@ -36,7 +36,7 @@ class Player:
         print()
         input("Press enter to continue...")
 
-    def attack_monster(self, mon):
+    def attack_monster(self, mon: 'Monster'):
         clear()
         print("You are attacking " + mon.name)
         print()

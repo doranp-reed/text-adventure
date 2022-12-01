@@ -107,6 +107,3 @@ if __name__ == "__main__":
                     command_success = False  # TODO: see if this is actually error-worthy or not
         if time_passes is True:
             updater.update_all()
-
-# this is for git testing
-# another testing line
