@@ -2,8 +2,8 @@ from room import Room
 from player import Player
 from item import Item
 from monster import Monster
-import os
 import updater
+from clear import clear
 
 player = Player()
 
@@ -21,10 +21,6 @@ def create_world():
     i.put_in_room(b)
     player.location = a
     Monster("Bob the monster", 20, b)
-
-
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def print_situation():

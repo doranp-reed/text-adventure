@@ -1,12 +1,8 @@
-import os
+from clear import clear
 from typing import Optional
 from room import Room
 from item import Item
 from monster import Monster
-
-
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 class Player:

@@ -1,10 +1,6 @@
-import os
+from clear import clear
 from room import Room
 from typing import Optional
-
-
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 class Item:
