@@ -1,5 +1,8 @@
 import os
 from typing import Optional
+from room import Room
+from item import Item
+from monster import Monster
 
 
 def clear():
@@ -8,8 +11,8 @@ def clear():
 
 class Player:
     def __init__(self):
-        self.location: Optional["Room"] = None  # TODO: see if I can stop the linter from warning here
-        self.items: list['Item'] = []  # TODO: decide on if I need the quotes or not
+        self.location: Optional[Room] = None  # TODO: see if I can stop the linter from warning here
+        self.items: list[Item] = []  # TODO: decide on if I need the quotes or not
         self.health: int = 50  # TODO: decide if this will always be an int
         self.alive: bool = True
 
@@ -22,7 +25,7 @@ class Player:
             return True
         return False
 
-    def pickup(self, item: 'Item'):
+    def pickup(self, item: Item):
         self.items.append(item)
         item.loc = self
         self.location.remove_item(item)
@@ -36,7 +39,7 @@ class Player:
         print()
         input("Press enter to continue...")
 
-    def attack_monster(self, mon: 'Monster'):
+    def attack_monster(self, mon: Monster):
         clear()
         print("You are attacking " + mon.name)
         print()

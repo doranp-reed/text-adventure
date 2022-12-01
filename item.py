@@ -1,4 +1,6 @@
 import os
+from room import Room
+from typing import Optional
 
 
 def clear():
@@ -9,7 +11,7 @@ class Item:
     def __init__(self, name, desc):
         self.name: str = name
         self.desc: str = desc
-        self.loc: "Room" = None  # TODO: fix this kind of thing?
+        self.loc: Optional[Room] = None  # TODO: do I need quotes or no?
 
     def describe(self):
         clear()
