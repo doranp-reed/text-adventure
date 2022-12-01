@@ -130,5 +130,6 @@ dmypy.json
 
 
 
-# git credentials
+# my modifications
 .git-credentials
+stupid/
