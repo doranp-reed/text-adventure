@@ -4,6 +4,7 @@ from item import Item
 from monster import Monster
 import updater
 from clear import clear
+from time import sleep
 
 player = Player()
 command_help = {'help': '[command] -- prints list of options or help on given command',
@@ -58,11 +59,25 @@ def show_help():
     input("Press enter to continue...")
 
 
+def show_long_help(comm: str):
+    clear()
+    match comm:
+        case 'go':
+            print('The `go` command is used to move between rooms.')
+            print('Enter `go <direction>` to move to the room in the given direction.')
+            print('If there is no room in the given direction, you will not be moved anywhere.')
+
+        case _:
+            print(f'Sorry, there is no information available for {comm}')
+
+    input('\nPress enter to continue...')
+
+
 def string_cleaner(com: str) -> str:
     ret = ''
-    alphabet = 'abcdefghijklm nopqrstuvwxyz'  # note that this has a space, so that's not removed
+    alphabet_and_numbers = 'abcdefghijklmnopqrstuvwxyz 0123456789'  # note that this has a space, so that's not removed
     for symbol in com.lower():
-        if symbol in alphabet:
+        if symbol in alphabet_and_numbers:
             ret += symbol
     return ret
 
@@ -76,9 +91,13 @@ if __name__ == "__main__":
     create_world()
     playing = True
     clear()
+
     print('Welcome to the dungeon!')
     print('Be very careful: a single wrong keystroke could end your time here!\n')
-    input("Press enter to continue...")
+    player.name = input("What is your name? ")
+    print('\nWelcome, ' + player.name + '!')
+    sleep(2)
+    clear()
 
     while playing and player.alive:
         print_situation()
@@ -87,21 +106,21 @@ if __name__ == "__main__":
 
         while not command_success:
             command_success = True
-            command = input("What now? ('help' for list of options) ")
+            original_command = input("What now? ('help' for list of options) ")  # sometimes this is still needed
 
-            command = string_cleaner(command)
+            command = string_cleaner(original_command)
 
             if len(command) == 0:
                 continue
 
-            command_words = command.split()
+            command_words = command.split()  # note that, although it's called `command_words`, it includes numbers too
             if len(command_words) == 0:
                 continue
 
             match command_words[0]:
                 case "go":  # now 'go' is well-handled (by my standards)
-                    if len(command_words) > 2:
-                        too_many_commands()
+                    if len(command_words) > 2:  # TODO: decide if *any* commands will use more than 2 words, and if so
+                        too_many_commands()     # move this functionality outside of the individual cases
                         continue
                     okay = player.go_direction(command_words[1]) 
                     if okay:
@@ -131,11 +150,24 @@ if __name__ == "__main__":
                         print('No such item.')
                         command_success = False
 
+                case 'wait':
+                    numb_of_turns = 1
+                    if len(command_words) > 1:
+                        numb_of_turns = command_words[1]
+                    for time in range(numb_of_turns):
+                        updater.update_all()
+
+                case 'me':
+                    print(player)
+
                 case "inv":
                     player.show_inventory()
 
                 case "help":
-                    show_help()
+                    if len(command_words) == 1:
+                        show_help()
+                    else:
+                        show_long_help(command_words[1])
 
                 case "quit":
                     playing = False
@@ -149,6 +181,11 @@ if __name__ == "__main__":
                         print("No such monster.")
                         command_success = False
                 
+                case 'dev':  # for my testing (so I can see in real-time stuff like the player's hp)
+                    my_command = original_command[4:]
+                    exec(my_command)
+                    input('\nPress enter to continue...')
+
                 case _:  # other cases
                     print("Not a valid command ('help' for a list of options)")
                     command_success = False  # TODO: see if this is actually error-worthy or not

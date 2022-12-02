@@ -1,13 +1,13 @@
 # game modifications
 add/improve error handling for built-in functions
-welcome screen, `about` command, help for specific commands (player name?)
+welcome screen, `about` command, help for specific commands
 clarity on when a monster moves/something updates
-fight monster just on name (no long string)
-string-cleaning function (remove symbols, upper case) for commands
 
 map, or some way of tracking history/not getting lost
 
 inconsistency in when screen is cleared, etc: make standard print size? like "two lines for status, one for result..."
+
+one-way doors/rooms?
 
 # code modifications
 change how `show-help` works? (generalize)

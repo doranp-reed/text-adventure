@@ -1,3 +1,14 @@
+# TOTAL POINTS
+1 - 'drop' command
+1 - command abbreviations
+? - access everything by single word (1) (somewhat part of comm. abbrev.)
+1 - 'wait' command (2)
+? - player name (1)
+? - hidden dev command (?)
+? - welcome screen (1)
+? - detailed help commands (2/3) (UNFINISHED)
+2 - 'me' command
+
 # starter code modification
 added type hinting, good-practice spacing between functions
 extracted `clear()` function to its own file

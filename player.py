@@ -1,5 +1,6 @@
 from clear import clear
 from typing import Optional
+from names import get_first_name
 
 
 class Player:
@@ -8,6 +9,20 @@ class Player:
         self.items: list['Item'] = []  # TODO: decide on if I need the quotes or not
         self.health: int = 50  # TODO: decide if this will always be an int
         self.alive: bool = True
+        self.name: str = get_first_name().lower()  # random name
+
+    def __repr__(self):
+        ret_str = f'{self.name}, {self.health}HP\n'
+
+        if len(self.items) > 0:
+            ret_str += 'Items:'
+            for item in self.items:
+                ret_str += f' {item}'
+        else:
+            ret_str += 'No items in inventory.'
+
+        return ret_str
+
 
     # goes in specified direction if possible, returns True
     # if not possible returns False
