@@ -10,7 +10,7 @@ player = Player()
 command_help = {'help': '[command] -- prints list of options or help on given command',
                 'go': '<direction> -- moves you in the given direction',
                 'inv': '-- opens your inventory',
-                'take': '<item> -- picks up the given item',
+                'take': '[item] -- picks up the given item',
                 'quit': '-- quits the game',
                 'fight': '<monster name> -- fights the given monster',
                 'drop': '<item> -- drops the given item',
@@ -28,8 +28,12 @@ def create_world():
     Room.connect_rooms(c, "east", d, "west")
     Room.connect_rooms(a, "north", c, "south")
     Room.connect_rooms(b, "north", d, "south")
-    i = Item("rock", "This is just a rock.")
-    i.put_in_room(b)
+    i1 = Item("rock", "This is just a rock.")
+    i1.put_in_room(b)
+    i2 = Item('stick', 'it\'s a stick!')
+    i2.put_in_room(c)
+    i3 = Item('medal', 'Win the game!')
+    i3.put_in_room(d)
     player.location = a
     Monster(20, b)
 
@@ -88,7 +92,8 @@ def show_long_help(comm: str):
 
         case 'take':
             print('The \'take\' command is used to take an item that is in the room.')
-            print('Enter \'take <item>\' to take an item from the room and put it in your inventory.')
+            print('Enter \'take [item]\' to take an item from the room and put it in your inventory, or')
+            print('enter \'take\' to take all items from the room.')
 
         case 'quit':
             print('The \'quit\' command is used to quit the game.')
@@ -171,6 +176,7 @@ if __name__ == "__main__":
                 case "go":  # now 'go' is well-handled (by my standards)
                     if len(command_words) > 2:  # TODO: decide if *any* commands will use more than 2 words, and if so
                         too_many_commands()     # move this functionality outside of the individual cases
+                        command_success = False
                         continue
                     okay = player.go_direction(command_words[1]) 
                     if okay:
@@ -180,18 +186,39 @@ if __name__ == "__main__":
                         command_success = False
 
                 case "take":
-                    if len(command_words) > 2:
+                    if len(command_words) > 2:  # too many keywords
                         too_many_commands()
-                        continue
-                    target_name = command_words[1]
-                    target = player.location.get_item_by_name(target_name)
-                    if target is not False:
-                        player.pickup(target)
-                    else:
-                        print_status_update('print("No such item.")')
-                        clear()
-                        print_situation()
                         command_success = False
+                        continue
+                    elif len(command_words) == 2:  # take a specific item
+                        target_name = command_words[1]
+                        target = player.location.get_item_by_name(target_name)
+                        if target is not False:
+                            if target.name == 'medal':
+                                print('Congradulations! You win!')
+                                playing = False
+                            player.pickup(target)
+                        else:
+                            print_status_update('print("No such item.")')
+                            clear()
+                            print_situation()
+                            command_success = False
+                    else:  # take all
+                        total_items = len(player.location.items)
+                        if total_items != 0:
+                            clear()
+                            print()
+                            for _ in range(total_items):  # this is to avoid modifying the iterated list while iterating
+                                item: Item = player.location.items[0]
+                                if item.name == 'medal':
+                                    print('Congradulations! You win!')
+                                    playing = False
+                                player.pickup(item)
+                                print(f'took {item.name}')
+                            input('Press enter to continue...')
+                        else:
+                            print_status_update('print(There are no items in this room.)')
+                            command_success = False
 
                 case 'drop':  # can handle multi-word objects
                     target_name = command[5:]  # everything after "drop "
@@ -205,7 +232,7 @@ if __name__ == "__main__":
                 case 'wait':
                     numb_of_turns = 1
                     if len(command_words) > 1:
-                        numb_of_turns = command_words[1]
+                        numb_of_turns = int(command_words[1])
                     for time in range(numb_of_turns):
                         updater.update_all()
 
@@ -252,5 +279,6 @@ if __name__ == "__main__":
                 case _:  # other cases
                     print("Not a valid command ('help' for a list of options)")
                     command_success = False  # TODO: see if this is actually error-worthy or not
+
         if time_passes is True:
             updater.update_all()

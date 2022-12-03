@@ -1,4 +1,6 @@
 import random
+import updater
+from monster import Monster
 
 
 class Room:
@@ -7,6 +9,7 @@ class Room:
         self.monsters: list['Monster'] = []
         self.exits: list[list[str, 'Room']] = []
         self.items: list['Item'] = []
+        updater.register(self)
 
     def add_exit(self, exit_name: str, destination: 'Room'):
         self.exits.append([exit_name, destination])
@@ -58,3 +61,7 @@ class Room:
 
     def random_neighbor(self):
         return random.choice(self.exits)[1]
+    
+    def update(self):
+        if random.random() < .1:
+            Monster(10, self)

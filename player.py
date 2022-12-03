@@ -19,7 +19,7 @@ class Player:
         if len(self.items) > 0:
             ret_str += 'Items:'
             for item in self.items:
-                ret_str += f' {item}'
+                ret_str += f' {item.name}'
         else:
             ret_str += 'No items in inventory.'
 

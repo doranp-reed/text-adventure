@@ -1,4 +1,4 @@
-# TOTAL POINTS (7/13)
+# TOTAL POINTS (13/20)
 1 - 'drop' command
 1 - command abbreviations
 ? - access everything by single word (1) (somewhat part of comm. abbrev.)
@@ -10,6 +10,9 @@
 2 - 'me' command
 2 - player hp regeneration
 2 - 'insp' command (inspect)
+? - take all "command" (1/2)
+2 - random monster generation
+2 - victory condition
 
 # starter code modification
 added type hinting, good-practice spacing between functions
@@ -27,10 +30,3 @@ changing functionality so everything is accessible by a single word (e.g. monste
 
 # drop command
 added drop command
-
-# misc. 3:15 pm 1 Dec (not comprehensive)
-gave monsters random names from `names` package
-added `__repr__` for monsters
-began to add better command parsing (string cleaning)
-added small intro screen
-updated TODO, Modificaations
