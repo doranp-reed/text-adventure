@@ -13,19 +13,22 @@ command_help = {'help': '[command] -- prints list of options or help on given co
                 'take': '<item> -- picks up the given item',
                 'quit': '-- quits the game',
                 'fight': '<monster name> -- fights the given monster',
-                'drop': '<item> -- drops the given item'}
+                'drop': '<item> -- drops the given item',
+                'wait': '[rounds] -- waits the given number of rounds (default 1)',
+                'me': '-- shows information about you: name, health, items, etc.',
+                'insp': '<item> -- inspects an item in the room or inventory'}
 
 
 def create_world():
-    a = Room("You are in room 1")
-    b = Room("You are in room 2")
-    c = Room("You are in room 3")
-    d = Room("You are in room 4")
+    a = Room("You are in room 1.")
+    b = Room("You are in room 2.")
+    c = Room("You are in room 3.")
+    d = Room("You are in room 4.")
     Room.connect_rooms(a, "east", b, "west")
     Room.connect_rooms(c, "east", d, "west")
     Room.connect_rooms(a, "north", c, "south")
     Room.connect_rooms(b, "north", d, "south")
-    i = Item("Rock", "This is just a rock.")
+    i = Item("rock", "This is just a rock.")
     i.put_in_room(b)
     player.location = a
     Monster(20, b)
@@ -51,6 +54,12 @@ def print_situation():
     print()
 
 
+def print_status_update(update: str):
+    clear()
+    exec(update)
+    input('\nPress enter to continue...')
+
+
 def show_help():
     clear()
     for key in command_help:
@@ -62,10 +71,51 @@ def show_help():
 def show_long_help(comm: str):
     clear()
     match comm:
+
+        case 'help':
+            print('The \'help\' command is used to learn more about the different commands.')
+            print('Enter \'help\' to see a list of commands,')
+            print('or \'help [command]\' to see more information about a command.')
+
         case 'go':
-            print('The `go` command is used to move between rooms.')
-            print('Enter `go <direction>` to move to the room in the given direction.')
-            print('If there is no room in the given direction, you will not be moved anywhere.')
+            print('The \'go\' command is used to move between rooms.')
+            print('Enter \'go <direction>\' to move to the room in the given direction.')
+            # print('If there is no room in the given direction, you will not be moved anywhere.')
+
+        case 'inv':
+            print('The \'inv\' command is used to see your inventory.')
+            print('Enter \'inv\' to list its contents.')
+
+        case 'take':
+            print('The \'take\' command is used to take an item that is in the room.')
+            print('Enter \'take <item>\' to take an item from the room and put it in your inventory.')
+
+        case 'quit':
+            print('The \'quit\' command is used to quit the game.')
+            print('Note that your state is not saved, so any progress will be lost.')  # TODO: change if this changes
+
+        case 'fight':
+            print('The \'fight\' command is used to fight a monster in the room.')
+            print('Enter \'fight <monster>\' to fight a monster;')
+            print('if you win the monster is killed, if you lose you die.')
+
+        case 'drop':
+            print('The \'drop\' command is used to drop an item from your inventory.')
+            print('Enter \'drop <item>\' to remove the given item from your inventory and put it in the current room.')
+        
+        case 'wait':
+            print('The \'wait\' command is used to wait for a given number of rounds.')
+            print('Time passes when you do some things (like move between rooms), so with this you can wait in place.')
+            print('Enter \'wait [rounds]\' to wait for the given number of rounds (default 1 round).')
+        
+        case 'me':
+            print('The \'me\' command is used to see information about you, the player.')
+            print('Enter \'me\' to see things like your health, items, and other attributes.')  # TODO: add other stuff?
+        
+        case 'insp':
+            print('The \'insp\' command is used to inspect an item and view its properies.')
+            print('Enter \'insp <item>\' to see what an item does.')
+            print('This can be done on an item in the room or in your inventory.')
 
         case _:
             print(f'Sorry, there is no information available for {comm}')
@@ -138,7 +188,9 @@ if __name__ == "__main__":
                     if target is not False:
                         player.pickup(target)
                     else:
-                        print("No such item.")
+                        print_status_update('print("No such item.")')
+                        clear()
+                        print_situation()
                         command_success = False
 
                 case 'drop':  # can handle multi-word objects
@@ -158,7 +210,7 @@ if __name__ == "__main__":
                         updater.update_all()
 
                 case 'me':
-                    print(player)
+                    print_status_update('print(player)')
 
                 case "inv":
                     player.show_inventory()
@@ -185,6 +237,17 @@ if __name__ == "__main__":
                     my_command = original_command[4:]
                     exec(my_command)
                     input('\nPress enter to continue...')
+                
+                case 'insp':
+                    target_name = command_words[1]
+                    target: Item | bool = player.get_item_by_name(target_name)
+                    if not target:  # so it's not in the inventory
+                        target = player.location.get_item_by_name(target_name)
+                    if not target:  # so it's not in the room either
+                        print('No such item.')
+                        command_success = False
+                    else:
+                        print_status_update('print(target)')
 
                 case _:  # other cases
                     print("Not a valid command ('help' for a list of options)")

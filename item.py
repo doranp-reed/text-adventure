@@ -5,8 +5,11 @@ from typing import Optional
 class Item:
     def __init__(self, name, desc):
         self.name: str = name
-        self.desc: str = desc
+        self.desc: str = desc  # TODO: actually use this value
         self.location: Optional['Room | Player'] = None  # TODO: do I need quotes or no?
+    
+    def __repr__(self):
+        return f'{self.name}: {self.desc}'
 
     def describe(self):
         clear()

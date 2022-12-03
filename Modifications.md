@@ -1,13 +1,15 @@
-# TOTAL POINTS
+# TOTAL POINTS (7/13)
 1 - 'drop' command
 1 - command abbreviations
 ? - access everything by single word (1) (somewhat part of comm. abbrev.)
-1 - 'wait' command (2)
+1 - 'wait' command
 ? - player name (1)
 ? - hidden dev command (?)
 ? - welcome screen (1)
-? - detailed help commands (2/3) (UNFINISHED)
+? - detailed help commands (2/3)
 2 - 'me' command
+2 - player hp regeneration
+2 - 'insp' command (inspect)
 
 # starter code modification
 added type hinting, good-practice spacing between functions

@@ -1,6 +1,7 @@
 from clear import clear
 from typing import Optional
 from names import get_first_name
+import updater
 
 
 class Player:
@@ -10,6 +11,7 @@ class Player:
         self.health: int = 50  # TODO: decide if this will always be an int
         self.alive: bool = True
         self.name: str = get_first_name().lower()  # random name
+        updater.register(self)
 
     def __repr__(self):
         ret_str = f'{self.name}, {self.health}HP\n'
@@ -22,7 +24,6 @@ class Player:
             ret_str += 'No items in inventory.'
 
         return ret_str
-
 
     # goes in specified direction if possible, returns True
     # if not possible returns False
@@ -51,12 +52,13 @@ class Player:
 
     def show_inventory(self):
         clear()
-        print("You are currently carrying:")
-        print()
-        for i in self.items:
-            print(i.name)
-        print()
-        input("Press enter to continue...")
+        if len(self.items) != 0:
+            print("You are currently carrying:\n")
+            for i in self.items:
+                print(i.name)
+        else:
+            print('You are currently carrying no items.')
+        input("\nPress enter to continue...")
 
     def attack_monster(self, mon: 'Monster'):
         clear()
@@ -74,3 +76,7 @@ class Player:
             self.alive = False
         print()
         input("Press enter to continue...")
+    
+    def update(self):
+        if self.health < 50:
+            self.health += 1
