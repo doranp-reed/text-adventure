@@ -29,4 +29,4 @@ class Potion(Item):
     
     def __init__(self, name, desc, hp):
         super().__init__(name, desc)
-        self.hp = hp
+        self.heal_value = hp
