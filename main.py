@@ -299,8 +299,12 @@ if __name__ == "__main__":
                     item_type: str = target.type
                     match item_type:
                         case 'potion':
+                            old_hp = player.hp
                             player.heal(target.hp)  # TODO: fix?
                             player.remove_item(target)
+                            clear()
+                            print(f'You healed from {old_hp} to {player.health}!')
+                            input('\nPress enter to continue...')
                         
                         case 'armor':
                             pass
