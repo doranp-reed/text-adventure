@@ -3,6 +3,8 @@ from typing import Optional
 
 
 class Item:
+    type = 'nothing special'
+    
     def __init__(self, name, desc):
         self.name: str = name
         self.desc: str = desc  # TODO: actually use this value
@@ -20,3 +22,11 @@ class Item:
     def put_in_room(self, room: 'Room'):
         self.location = room
         room.add_item(self)
+
+
+class Potion(Item):
+    type = 'potion'
+    
+    def __init__(self, name, desc, hp):
+        super().__init__(name, desc)
+        self.hp = hp

@@ -59,6 +59,7 @@ game save?
 ## UX cleanup
 standardize how printing/clearing is implemented
 updates when things change (e.g. monster arrives in room)
+standardize capitliaztion/punctuation in messages
 
 ## misc.
 how do I want to make different rooms? should monsters move around a bunch, or should each room be more like a separate challenge?
@@ -67,8 +68,8 @@ how do I want to make different rooms? should monsters move around a bunch, or s
 2 - weapons (comabat system as well)
 2 - armor
 3 - more/different monsters (two or three normal types, maybe boss)
-<!-- ? - boss fight (special combat) -->
 2 - bigger world
 3 - loot
+2 - healing potions
 4 - currency/merchant
 4 - save/load game

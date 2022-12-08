@@ -9,6 +9,7 @@ class Player:
         self.location: Optional['Room'] = None  # TODO: see if I can stop the linter from warning here
         self.items: list['Item'] = []  # TODO: decide on if I need the quotes or not
         self.health: int = 50  # TODO: decide if this will always be an int
+        self.max_health = 50
         self.alive: bool = True
         self.name: str = get_first_name().lower()  # random name
         updater.register(self)
@@ -38,6 +39,14 @@ class Player:
         self.items.append(item)
         item.location = self
         self.location.remove_item(item)
+    
+    def remove_item(self, item):
+        self.items.remove(item)
+    
+    def heal(self, amount: int):
+        # old_hp = self.health
+        self.health += amount
+        self.health = min(self.health, self.max_health)  # there's an instant where you're over max hp, but whatever
 
     def get_item_by_name(self, name: str):
         for i in self.items:
@@ -46,11 +55,11 @@ class Player:
             return False
 
     def drop(self, item: 'Item'):  # TODO: implement error handling
-        self.items.remove(item)
+        self.remove_item(item)
         item.location = self.location
         self.location.add_item(item)
 
-    def show_inventory(self):
+    def show_inventory(self):  # TODO: make cleaner
         clear()
         if len(self.items) != 0:
             print("You are currently carrying:\n")
@@ -78,5 +87,4 @@ class Player:
         input("Press enter to continue...")
     
     def update(self):
-        if self.health < 50:
-            self.health += 1
+        self.heal(1)

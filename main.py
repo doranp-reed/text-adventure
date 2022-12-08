@@ -1,6 +1,6 @@
 from room import Room
 from player import Player
-from item import Item
+from item import Item, Potion
 from monster import Monster
 import updater
 from clear import clear
@@ -16,7 +16,8 @@ command_help = {'help': '[command] -- prints list of options or help on given co
                 'drop': '<item> -- drops the given item',
                 'wait': '[rounds] -- waits the given number of rounds (default 1)',
                 'me': '-- shows information about you: name, health, items, etc.',
-                'insp': '<item> -- inspects an item in the room or inventory'}
+                'insp': '<item> -- inspects an item in the room or inventory',
+                'use': '<item> -- uses item in inventory'}
 
 
 def create_world():
@@ -34,6 +35,12 @@ def create_world():
     i2.put_in_room(c)
     i3 = Item('medal', 'Win the game!')
     i3.put_in_room(d)
+    i4 = Potion('medium_potion', 'heal 20 hitpoints', 20)
+    i5 = Potion('small_potion', 'heal 10 hitpoints', 10)
+    i6 = Potion('large_potion', 'heal 30 hitpoints', 30)
+    i4.put_in_room(a)
+    i5.put_in_room(b)
+    i6.put_in_room(c)
     player.location = a
     Monster(20, b)
 
@@ -121,6 +128,12 @@ def show_long_help(comm: str):
             print('The \'insp\' command is used to inspect an item and view its properies.')
             print('Enter \'insp <item>\' to see what an item does.')
             print('This can be done on an item in the room or in your inventory.')
+        
+        case 'use':
+            print('The \'use\' command is for using an item in your inventory.')
+            print('If given a potion, it will consume the potion and heal you;')
+            print('If given a weapon or armor, it will equip that and remove your current weapon or armor (if any).')
+            print('Enter \'use <item>\' to use an item. Note that it must be in your inventory first.')
 
         case _:
             print(f'Sorry, there is no information available for {comm}')
@@ -130,9 +143,9 @@ def show_long_help(comm: str):
 
 def string_cleaner(com: str) -> str:
     ret = ''
-    alphabet_and_numbers = 'abcdefghijklmnopqrstuvwxyz 0123456789'  # note that this has a space, so that's not removed
+    good_chars = 'abcdefghijklmnopqrstuvwxyz_ 0123456789'  # note that this has a space, so that's not removed
     for symbol in com.lower():
-        if symbol in alphabet_and_numbers:
+        if symbol in good_chars:
             ret += symbol
     return ret
 
@@ -157,7 +170,7 @@ if __name__ == "__main__":
     while playing and player.alive:
         print_situation()
         command_success = False
-        time_passes = False
+        time_goes_on = False  # renamed because whenever I type `pass` my IDE tried to fill this in instead
 
         while not command_success:
             command_success = True
@@ -180,7 +193,7 @@ if __name__ == "__main__":
                         continue
                     okay = player.go_direction(command_words[1]) 
                     if okay:
-                        time_passes = True
+                        time_goes_on = True
                     else:
                         print("You can't go that way.")
                         command_success = False
@@ -275,10 +288,34 @@ if __name__ == "__main__":
                         command_success = False
                     else:
                         print_status_update('print(target)')
+                
+                case 'use':
+                    target_name = command_words[1]
+                    target: type[Item] | bool = player.get_item_by_name(target_name)
+                    if not target:  # so it's not in the inventory
+                        print('No such item.')
+                        continue  # equivalent of "command_success" change?
+                    # else...
+                    item_type: str = target.type
+                    match item_type:
+                        case 'potion':
+                            player.heal(target.hp)  # TODO: fix?
+                            player.remove_item(target)
+                        
+                        case 'armor':
+                            pass
+                        
+                        case 'weapon':
+                            pass
+                        
+                        case _:
+                            error_message = 'print(\"Not a valid target: please select a weapon, armor, or potion.")'
+                            print_status_update(error_message)  # this is so my lines aren't too long
+                            command_success = False
 
                 case _:  # other cases
                     print("Not a valid command ('help' for a list of options)")
                     command_success = False  # TODO: see if this is actually error-worthy or not
 
-        if time_passes is True:
+        if time_goes_on is True:
             updater.update_all()
