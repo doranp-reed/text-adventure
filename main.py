@@ -10,7 +10,7 @@ player = Player()
 command_help = {'help': '[command] -- prints list of options or help on given command',
                 'go': '<direction> -- moves you in the given direction',
                 'inv': '-- opens your inventory',
-                'take': '[item] -- picks up the given item',
+                'take': '[item] -- picks up the given item (default takes all items)',
                 'quit': '-- quits the game',
                 'fight': '<monster name> -- fights the given monster',
                 'drop': '<item> -- drops the given item',
@@ -110,6 +110,7 @@ def show_long_help(comm: str):
             print('The \'fight\' command is used to fight a monster in the room.')
             print('Enter \'fight <monster>\' to fight a monster;')
             print('if you win the monster is killed, if you lose you die.')
+            print('Note that you only need to specify the monster\'s first name.')
 
         case 'drop':
             print('The \'drop\' command is used to drop an item from your inventory.')
@@ -169,157 +170,155 @@ if __name__ == "__main__":
 
     while playing and player.alive:
         print_situation()
-        command_success = False
-        time_goes_on = False  # renamed because whenever I type `pass` my IDE tried to fill this in instead
+        # I removed the `command_success` and second while loop in favor of a bunch of continue statements
 
-        while not command_success:
-            command_success = True
-            original_command = input("What now? ('help' for list of options) ")  # sometimes this is still needed
+        original_command = input("What now? ('help' for list of options) ")  # sometimes this string is still needed
+        clean_command = string_cleaner(original_command)
+        if len(clean_command) == 0:
+            continue
 
-            command = string_cleaner(original_command)
+        command_words = clean_command.split()  # note that, although it's called `command_words`, it includes others too
+        if len(command_words) == 0:
+            continue
 
-            if len(command) == 0:
-                continue
+        match command_words[0]:
+            case "go":  # now 'go' is well-handled (by my standards)
+                if len(command_words) > 2:  # TODO: decide if *any* commands will use more than 2 words, and if so
+                    too_many_commands()     # move this functionality outside of the individual cases
+                    continue
+                okay = player.go_direction(command_words[1])
+                if not okay:
+                    print("You can't go that way.")
+                    print('\nPress enter to continue...')
+                    continue
 
-            command_words = command.split()  # note that, although it's called `command_words`, it includes numbers too
-            if len(command_words) == 0:
-                continue
-
-            match command_words[0]:
-                case "go":  # now 'go' is well-handled (by my standards)
-                    if len(command_words) > 2:  # TODO: decide if *any* commands will use more than 2 words, and if so
-                        too_many_commands()     # move this functionality outside of the individual cases
-                        command_success = False
-                        continue
-                    okay = player.go_direction(command_words[1]) 
-                    if okay:
-                        time_goes_on = True
+            case "take":
+                if len(command_words) > 2:  # too many keywords
+                    too_many_commands()
+                    continue
+                
+                if len(command_words) == 2:  # take a specific item
+                    target_name = command_words[1]
+                    target = player.location.get_item_by_name(target_name)
+                    if target is not False:
+                        if target.name == 'medal':
+                            print('Congradulations! You win!')
+                            playing = False
+                        player.pickup(target)
                     else:
-                        print("You can't go that way.")
-                        command_success = False
-
-                case "take":
-                    if len(command_words) > 2:  # too many keywords
-                        too_many_commands()
-                        command_success = False
+                        print_status_update('print("No such item.")')
+                        # clear()
+                        # print_situation()  # TODO: figure out if this is a mistake or what
                         continue
-                    elif len(command_words) == 2:  # take a specific item
-                        target_name = command_words[1]
-                        target = player.location.get_item_by_name(target_name)
-                        if target is not False:
-                            if target.name == 'medal':
+                else:  # take all
+                    total_items = len(player.location.items)
+                    if total_items != 0:
+                        clear()
+                        print()
+                        for _ in range(total_items):  # this is to avoid modifying the iterated list while iterating
+                            item: Item = player.location.items[0]
+                            if item.name == 'medal':
                                 print('Congradulations! You win!')
                                 playing = False
-                            player.pickup(target)
-                        else:
-                            print_status_update('print("No such item.")')
-                            clear()
-                            print_situation()
-                            command_success = False
-                    else:  # take all
-                        total_items = len(player.location.items)
-                        if total_items != 0:
-                            clear()
-                            print()
-                            for _ in range(total_items):  # this is to avoid modifying the iterated list while iterating
-                                item: Item = player.location.items[0]
-                                if item.name == 'medal':
-                                    print('Congradulations! You win!')
-                                    playing = False
-                                player.pickup(item)
-                                print(f'took {item.name}')
-                            input('Press enter to continue...')
-                        else:
-                            print_status_update('print(There are no items in this room.)')
-                            command_success = False
-
-                case 'drop':  # can handle multi-word objects
-                    target_name = command[5:]  # everything after "drop "
-                    target = player.get_item_by_name(target_name)
-                    if target is not False:
-                        player.drop(target)
+                            player.pickup(item)
+                            print(f'took {item.name}')
+                        input('Press enter to continue...')
                     else:
-                        print('No such item.')
-                        command_success = False
+                        print_status_update('print(There are no items in this room.)')
+                        continue
 
-                case 'wait':
-                    numb_of_turns = 1
-                    if len(command_words) > 1:
-                        numb_of_turns = int(command_words[1])
-                    for time in range(numb_of_turns):
-                        updater.update_all()
+            case 'drop':  # TODO: change to how I like it
+                target_name = clean_command[5:]  # everything after "drop "
+                target = player.get_item_by_name(target_name)
+                if target is not False:
+                    player.drop(target)
+                else:
+                    print('No such item.')
+                    continue
 
-                case 'me':
-                    print_status_update('print(player)')
+            case 'wait':
+                numb_of_turns = 1
+                if len(command_words) > 1:
+                    numb_of_turns = int(command_words[1])
+                for time in range(numb_of_turns):
+                    updater.update_all()
+                    continue  # this is because we already waited the necessary number of rounds
 
-                case "inv":
-                    player.show_inventory()
+            case 'me':
+                print_status_update('print(player)')
+                continue
 
-                case "help":
-                    if len(command_words) == 1:
-                        show_help()
-                    else:
-                        show_long_help(command_words[1])
+            case "inv":
+                player.show_inventory()
+                continue
 
-                case "quit":
-                    playing = False
+            case "help":
+                if len(command_words) == 1:
+                    show_help()
+                else:
+                    show_long_help(command_words[1])
+                continue
 
-                case "fight":  # TODO: add in description
-                    target_name = command[6:]
-                    target = player.location.get_monster_by_name(target_name)
-                    if target is not False:
-                        player.attack_monster(target)
-                    else:
-                        print("No such monster.")
-                        command_success = False
-                
-                case 'dev':  # for my testing (so I can see in real-time stuff like the player's hp)
-                    my_command = original_command[4:]
-                    exec(my_command)
-                    input('\nPress enter to continue...')
-                
-                case 'insp':
-                    target_name = command_words[1]
-                    target: Item | bool = player.get_item_by_name(target_name)
-                    if not target:  # so it's not in the inventory
-                        target = player.location.get_item_by_name(target_name)
-                    if not target:  # so it's not in the room either
-                        print('No such item.')
-                        command_success = False
-                    else:
-                        print_status_update('print(target)')
-                
-                case 'use':
-                    target_name = command_words[1]
-                    target: type[Item] | bool = player.get_item_by_name(target_name)
-                    if not target:  # so it's not in the inventory
-                        print('No such item.')
-                        continue  # equivalent of "command_success" change?
-                    # else...
-                    item_type: str = target.type
-                    match item_type:
-                        case 'potion':
-                            old_hp = player.health
-                            player.heal(target.heal_value)  # TODO: fix?
-                            player.remove_item(target)
-                            clear()
-                            print(f'You healed from {old_hp} health to {player.health} health!')
-                            input('\nPress enter to continue...')
-                        
-                        case 'armor':
-                            pass
-                        
-                        case 'weapon':
-                            pass
-                        
-                        case _:
-                            error_message = 'print(\"Not a valid target: please select a weapon, armor, or potion.")'
-                            print_status_update(error_message)  # this is so my lines aren't too long
-                            command_success = False
+            case "quit":
+                playing = False
 
-                case _:  # other cases
-                    print("Not a valid command ('help' for a list of options)")
-                    command_success = False  # TODO: see if this is actually error-worthy or not
+            case "fight":  # TODO: change to how I like it
+                target_name = clean_command[6:]
+                target = player.location.get_monster_by_name(target_name)
+                if target is not False:
+                    player.attack_monster(target)
+                else:
+                    print("No such monster.")
+                    continue
+            
+            case 'dev':  # for my testing (so I can see in real-time stuff like the player's hp)
+                my_command = original_command[4:]
+                exec(my_command)
+                input('\nPress enter to continue...')
+                continue
+            
+            case 'insp':
+                target_name = command_words[1]
+                target: Item | bool = player.get_item_by_name(target_name)
+                if not target:  # so it's not in the inventory
+                    target = player.location.get_item_by_name(target_name)
+                if not target:  # so it's not in the room either
+                    print('No such item.')
+                    continue
+                else:
+                    print_status_update('print(target)')
+            
+            case 'use':
+                target_name = command_words[1]
+                target: type[Item] | bool = player.get_item_by_name(target_name)
+                if not target:  # so it's not in the inventory
+                    print('No such item.')
+                    continue
+                # else...
+                item_type: str = target.type
+                match item_type:
+                    case 'potion':
+                        old_hp = player.health
+                        player.heal(target.heal_value)  # TODO: fix?
+                        player.remove_item(target)
+                        clear()
+                        print(f'You healed from {old_hp} health to {player.health} health!')
+                        input('\nPress enter to continue...')
+                    
+                    case 'armor':
+                        pass
+                    
+                    case 'weapon':
+                        pass
+                    
+                    case _:
+                        error_message = 'print(\"Not a valid target: please select a weapon, armor, or potion.")'
+                        print_status_update(error_message)  # this is so my lines aren't too long
+                        continue
 
-        if time_goes_on is True:
-            updater.update_all()
+            case _:  # other cases
+                print("Not a valid command ('help' for a list of options)")
+                print('\nPress enter to continue...')
+                continue
+
+        updater.update_all()

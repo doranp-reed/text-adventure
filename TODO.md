@@ -39,7 +39,6 @@ better error messages (e.g. `no such monster 'gary the monster'`)
 # Second-half changes!
 
 ## code changes
-change the 2x `while` loop and how `command_success` is implemented
 standardize rest of case handling
 modify how commands are accessed/used (extend `command_help` functionality)
 better error/command failure handling
@@ -53,6 +52,7 @@ special rooms? puzzles?
 one-way doors? locked doors?
 **map/tracking?**
 difficulty level?
+potions
 
 game save?
 
@@ -60,6 +60,7 @@ game save?
 standardize how printing/clearing is implemented
 updates when things change (e.g. monster arrives in room)
 standardize capitliaztion/punctuation in messages
+about command
 
 ## misc.
 how do I want to make different rooms? should monsters move around a bunch, or should each room be more like a separate challenge?
@@ -73,3 +74,4 @@ how do I want to make different rooms? should monsters move around a bunch, or s
 2 - healing potions
 4 - currency/merchant
 4 - save/load game
+? - about command
