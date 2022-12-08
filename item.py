@@ -3,7 +3,7 @@ from typing import Optional
 
 
 class Item:
-    type = 'nothing special'
+    item_type = 'nothing special'
     
     def __init__(self, name, desc):
         self.name: str = name
@@ -25,7 +25,7 @@ class Item:
 
 
 class Potion(Item):
-    type = 'potion'
+    item_type = 'potion'
     
     def __init__(self, name, desc, hp):
         super().__init__(name, desc)

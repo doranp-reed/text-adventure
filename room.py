@@ -53,7 +53,7 @@ class Room:
     def has_monsters(self):
         return self.monsters != []
 
-    def get_monster_by_name(self, name: str):
+    def get_monster_by_name(self, name: str) -> Monster | bool:
         for i in self.monsters:
             if i.name.lower() == name.lower():
                 return i

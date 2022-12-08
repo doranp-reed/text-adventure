@@ -158,7 +158,6 @@ def too_many_commands():
 
 if __name__ == "__main__":
     create_world()
-    playing = True
     clear()
 
     print('Welcome to the dungeon!')
@@ -168,7 +167,7 @@ if __name__ == "__main__":
     sleep(2)
     clear()
 
-    while playing and player.alive:
+    while player.alive:
         print_situation()
         # I removed the `command_success` and second while loop in favor of a bunch of continue statements
 
@@ -199,12 +198,12 @@ if __name__ == "__main__":
                 
                 if len(command_words) == 2:  # take a specific item
                     target_name = command_words[1]
-                    target = player.location.get_item_by_name(target_name)
-                    if target is not False:
-                        if target.name == 'medal':
+                    monster = player.location.get_item_by_name(target_name)
+                    if monster is not False:
+                        if monster.name == 'medal':
                             print('Congradulations! You win!')
                             playing = False
-                        player.pickup(target)
+                        player.pickup(monster)
                     else:
                         print_status_update('print("No such item.")')
                         # clear()
@@ -229,9 +228,9 @@ if __name__ == "__main__":
 
             case 'drop':  # TODO: change to how I like it
                 target_name = clean_command[5:]  # everything after "drop "
-                target = player.get_item_by_name(target_name)
-                if target is not False:
-                    player.drop(target)
+                monster = player.get_item_by_name(target_name)
+                if monster is not False:
+                    player.drop(monster)
                 else:
                     print('No such item.')
                     continue
@@ -260,16 +259,32 @@ if __name__ == "__main__":
                 continue
 
             case "quit":
-                playing = False
+                break
 
-            case "fight":  # TODO: change to how I like it
-                target_name = clean_command[6:]
-                target = player.location.get_monster_by_name(target_name)
-                if target is not False:
-                    player.attack_monster(target)
-                else:
+            case "fight":  # TODO: update description
+                target_name = command_words[1]
+                monster: Monster | bool = player.location.get_monster_by_name(target_name)
+                if monster is False:
                     print("No such monster.")
                     continue
+                # else...
+                fighting = True
+                while fighting:
+                    print(f'You are fighting {monster}.')
+                    print(f'You have {player.health} health, {monster} has {monster.health} health.')
+                    player.attack_monster(monster)
+                    if monster.health <= 0:
+                        monster.die()
+                        print(f'You attack {monster}. It dies!')
+                        input('\nPress enter to continue...')
+                    monster.attack(player)
+                    if player.health <= 0:
+                        player.die()
+                        print(f'Oh no! {monster} killed you!')
+                        break
+                    # else...
+                    print(f'You attack {monster}. It attacks back!')
+                    input('\nPress enter to continue...')
             
             case 'dev':  # for my testing (so I can see in real-time stuff like the player's hp)
                 my_command = original_command[4:]
@@ -279,10 +294,10 @@ if __name__ == "__main__":
             
             case 'insp':
                 target_name = command_words[1]
-                target: Item | bool = player.get_item_by_name(target_name)
-                if not target:  # so it's not in the inventory
-                    target = player.location.get_item_by_name(target_name)
-                if not target:  # so it's not in the room either
+                monster: Item | bool = player.get_item_by_name(target_name)
+                if not monster:  # so it's not in the inventory
+                    monster = player.location.get_item_by_name(target_name)
+                if not monster:  # so it's not in the room either
                     print('No such item.')
                     continue
                 else:
@@ -290,17 +305,17 @@ if __name__ == "__main__":
             
             case 'use':
                 target_name = command_words[1]
-                target: type[Item] | bool = player.get_item_by_name(target_name)
-                if not target:  # so it's not in the inventory
+                monster: Item | Potion | bool = player.get_item_by_name(target_name)
+                if not monster:  # so it's not in the inventory
                     print('No such item.')
                     continue
                 # else...
-                item_type: str = target.type
+                item_type: str = monster.item_type
                 match item_type:
                     case 'potion':
                         old_hp = player.health
-                        player.heal(target.heal_value)  # TODO: fix?
-                        player.remove_item(target)
+                        player.heal(monster.heal_value)
+                        player.remove_item(monster)
                         clear()
                         print(f'You healed from {old_hp} health to {player.health} health!')
                         input('\nPress enter to continue...')
@@ -322,3 +337,8 @@ if __name__ == "__main__":
                 continue
 
         updater.update_all()
+    
+    if player.alive:
+        print('Goodbye!')
+    else:
+        print('You died. The end!')

@@ -4,7 +4,7 @@ from names import get_first_name
 
 
 class Monster:
-    class_name = 'monster'
+    monster_type = 'monster'
 
     def __init__(self, health, room: 'Room'):  # TODO: decide on where I should put the hints (input, value, both)
         self.name: str = get_first_name().lower()
@@ -28,3 +28,7 @@ class Monster:
     def die(self):
         self.location.remove_monster(self)
         updater.deregister(self)
+        # drop loot and stuff
+    
+    def attack(self, person):  # TODO: do this
+        pass

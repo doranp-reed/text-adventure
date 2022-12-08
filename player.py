@@ -69,22 +69,12 @@ class Player:
             print('You are currently carrying no items.')
         input("\nPress enter to continue...")
 
-    def attack_monster(self, mon: 'Monster'):
-        clear()
-        print("You are attacking " + mon.name)
-        print()
-        print("Your health is " + str(self.health) + ".")
-        print(mon.name + "'s health is " + str(mon.health) + ".")
-        print()
-        if self.health > mon.health:
-            self.health -= mon.health
-            print("You win. Your health is now " + str(self.health) + ".")
-            mon.die()
-        else:
-            print("You lose.")
-            self.alive = False
-        print()
-        input("Press enter to continue...")
+    def attack_monster(self, mon: 'Monster'):  # TODO: do this
+        pass
     
     def update(self):
         self.heal(1)
+    
+    def die(self):
+        self.alive = False
+        updater.deregister(self)
