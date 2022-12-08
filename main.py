@@ -1,6 +1,6 @@
 from room import Room
 from player import Player
-from item import Item, Potion
+from item import Item, Potion, Weapon, Armor
 from monster import Monster
 import updater
 from clear import clear
@@ -109,7 +109,7 @@ def show_long_help(comm: str):
         case 'fight':
             print('The \'fight\' command is used to fight a monster in the room.')
             print('Enter \'fight <monster>\' to fight a monster;')
-            print('if you win the monster is killed, if you lose you die.')
+            print('both you and the monster will attack each other, and if the monster dies they\'ll drop their stuff.')
             print('Note that you only need to specify the monster\'s first name.')
 
         case 'drop':
@@ -133,7 +133,7 @@ def show_long_help(comm: str):
         case 'use':
             print('The \'use\' command is for using an item in your inventory.')
             print('If given a potion, it will consume the potion and heal you;')
-            print('If given a weapon or armor, it will equip that and remove your current weapon or armor (if any).')
+            print('If given a weapon or armor, it will equip that and remove your current weapon or armor.')
             print('Enter \'use <item>\' to use an item. Note that it must be in your inventory first.')
 
         case _:
@@ -272,7 +272,7 @@ if __name__ == "__main__":
                 while fighting:
                     print(f'You are fighting {monster}.')
                     print(f'You have {player.health} health, {monster} has {monster.health} health.')
-                    player.attack_monster(monster)
+                    player.attack(monster)
                     if monster.health <= 0:
                         monster.die()
                         print(f'You attack {monster}. It dies!')
@@ -281,6 +281,7 @@ if __name__ == "__main__":
                     if player.health <= 0:
                         player.die()
                         print(f'Oh no! {monster} killed you!')
+                        input('\nPress enter to continue...')
                         break
                     # else...
                     print(f'You attack {monster}. It attacks back!')

@@ -2,6 +2,7 @@ from clear import clear
 from typing import Optional
 from names import get_first_name
 import updater
+from item import Weapon, Armor
 
 
 class Player:
@@ -12,6 +13,8 @@ class Player:
         self.max_health = 50
         self.alive: bool = True
         self.name: str = get_first_name().lower()  # random name
+        self.weapon = Weapon('Doran\'s blade', 'a basic sword', 10)  # TODO: balance damage and stuff
+        self.armor = Armor('Doran\'s shield', 'a basic shield strapped to your body', 5)
         updater.register(self)
 
     def __repr__(self):
@@ -69,12 +72,17 @@ class Player:
             print('You are currently carrying no items.')
         input("\nPress enter to continue...")
 
-    def attack_monster(self, mon: 'Monster'):  # TODO: do this
-        pass
+    def attack(self, mon: 'Monster'):
+        attack_damage = self.weapon.damage
+        mon.get_hit(attack_damage)
+    
+    def get_hit(self, damage_amount: int):
+        actual_damage = damage_amount - self.armor.defense
+        self.health -= actual_damage
     
     def update(self):
         self.heal(1)
     
     def die(self):
         self.alive = False
-        updater.deregister(self)
+        updater.deregister(self)  # TODO: is this actually necessary?

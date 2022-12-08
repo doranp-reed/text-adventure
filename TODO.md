@@ -75,3 +75,7 @@ how do I want to make different rooms? should monsters move around a bunch, or s
 4 - currency/merchant
 4 - save/load game
 ? - about command
+
+# TODO RIGHT NOW
+update `me` to show armor/weapon
+add a way to equip armor/weapon

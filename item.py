@@ -30,3 +30,25 @@ class Potion(Item):
     def __init__(self, name, desc, hp):
         super().__init__(name, desc)
         self.heal_value = hp
+
+
+class Weapon(Item):
+    item_type = 'weapon'
+    
+    def __init__(self, name, desc, damage):
+        super().__init__(name, desc)
+        self.damage: int = damage
+    
+    def __repr__(self):
+        return f'{self.name}: {self.damage} damage'
+
+
+class Armor(Item):
+    item_type = 'armor'
+    
+    def __init__(self, name, desc, defense):
+        super().__init__(name, desc)
+        self.defense: int = defense  # defense is flat reduction, not percentage reduction
+    
+    def __repr__(self):
+        return f'{self.name}: {self.defense} defense'
