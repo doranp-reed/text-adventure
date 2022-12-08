@@ -47,7 +47,7 @@ better error/command failure handling
 ## gameplay modifications
 **weapons, armor, combat system**
 level up? attributes?
-different monsters? boss?
+different monsters? boss? (roaming monster, room monster)
 **larger world (either random or made by me)**
 special rooms? puzzles?
 one-way doors? locked doors?
