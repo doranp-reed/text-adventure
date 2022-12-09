@@ -188,11 +188,11 @@ if __name__ == "__main__":
                 okay = player.go_direction(command_words[1])
                 if not okay:
                     print("You can't go that way.")
-                    print('\nPress enter to continue...')
+                    input('\nPress enter to continue...')
                     continue
 
             case "take":
-                if len(command_words) > 2:  # too many keywords
+                if len(command_words) > 2:  # TODO: should I have this kind of thing or no?
                     too_many_commands()
                     continue
                 
@@ -202,7 +202,7 @@ if __name__ == "__main__":
                     if item is not False:
                         if item.name == 'medal':
                             print('Congradulations! You win!')
-                            playing = False
+                            break
                         player.pickup(item)
                     else:
                         print_status_update('print("No such item.")')
@@ -218,7 +218,7 @@ if __name__ == "__main__":
                             item: Item = player.location.items[0]
                             if item.name == 'medal':
                                 print('Congradulations! You win!')
-                                playing = False
+                                break
                             player.pickup(item)
                             print(f'took {item.name}')
                         input('Press enter to continue...')
@@ -268,8 +268,8 @@ if __name__ == "__main__":
                     print("No such monster.")
                     continue
                 # else...
-                fighting = True
-                while fighting:
+                while True:
+                    clear()
                     print(f'You are fighting {monster}.')
                     print(f'You have {player.health} health, {monster} has {monster.health} health.')
                     player.attack(monster)
@@ -277,6 +277,7 @@ if __name__ == "__main__":
                         monster.die()
                         print(f'You attack {monster}. It dies!')
                         input('\nPress enter to continue...')
+                        break
                     monster.attack(player)
                     if player.health <= 0:
                         player.die()
@@ -294,15 +295,18 @@ if __name__ == "__main__":
                 continue
             
             case 'insp':
+                if len(command_words) < 2:
+                    print_status_update('print("Please give an item to inspect")')
+                    continue
                 target_name = command_words[1]
-                item: Item | bool = player.get_item_by_name(target_name)
+                item: type[Item] | bool = player.get_item_by_name(target_name)
                 if not item:  # so it's not in the inventory
                     item = player.location.get_item_by_name(target_name)
                 if not item:  # so it's not in the room either
-                    print('No such item.')
+                    print_status_update('print("No such item.")')
                     continue
                 else:
-                    print_status_update('print(target)')
+                    print_status_update('print(item)')
             
             case 'use':
                 target_name = command_words[1]

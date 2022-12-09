@@ -1,4 +1,5 @@
 from clear import clear
+from random import randint
 
 
 class Item:
@@ -6,7 +7,7 @@ class Item:
     
     def __init__(self, name, desc):
         self.name: str = name
-        self.desc: str = desc  # TODO: actually use this value
+        self.desc: str = desc
     
     def __repr__(self):
         return f'{self.name}: {self.desc}'
@@ -55,4 +56,6 @@ class Coins(Item):
     item_type = 'coins'
     
     def __init__(self):
-        pass
+        self.name: str = 'coins'
+        self.desc: str = 'a pile of coins'
+        self.value = randint(1, 7)

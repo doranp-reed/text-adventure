@@ -81,3 +81,6 @@ should monsters move around a bunch, or should each room be more like a separate
 # NOW
 class Coins
 monster die Coins
+
+pickup all coins
+monsters drop potion?

@@ -6,7 +6,7 @@ from monster import Monster
 class Room:
     def __init__(self, description: str):
         self.desc: str = description
-        self.monsters: list['Monster'] = []
+        self.monsters: list[Monster] = []
         self.exits: list[list[str, 'Room']] = []
         self.items: list['Item'] = []
         updater.register(self)
@@ -20,7 +20,7 @@ class Room:
                 return e[1]
         return self
 
-    @classmethod  # TODO: make sure this works
+    @classmethod
     def connect_rooms(cls, room1: 'Room', dir1: str, room2: 'Room', dir2: str):
         # creates "dir1" exit from room1 to room2 and vice versa
         room1.add_exit(dir1, room2)
@@ -35,10 +35,10 @@ class Room:
     def remove_item(self, item: 'Item'):
         self.items.remove(item)
 
-    def add_monster(self, monster: 'Monster'):
+    def add_monster(self, monster: Monster):
         self.monsters.append(monster)
 
-    def remove_monster(self, monster: 'Monster'):
+    def remove_monster(self, monster: Monster):
         self.monsters.remove(monster)
 
     def has_items(self):

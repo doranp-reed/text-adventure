@@ -41,7 +41,11 @@ class Player:
         return False
 
     def pickup(self, item: 'Item'):
-        self.add_item(item)
+        if item.item_type == 'coins':
+            self.add_coins(item.value)
+        else:
+            self.add_item(item)
+        
         self.location.remove_item(item)
     
     def remove_item(self, item):
@@ -49,6 +53,9 @@ class Player:
     
     def add_item(self, item: 'Item'):
         self.items.append(item)
+    
+    def add_coins(self, value: int):
+        self.coins += value
     
     def heal(self, amount: int):
         # old_hp = self.health
@@ -59,7 +66,7 @@ class Player:
         for i in self.items:
             if i.name.lower() == name.lower():
                 return i
-            return False
+        return False
 
     def drop(self, item: 'Item'):  # TODO: implement error handling
         self.remove_item(item)
