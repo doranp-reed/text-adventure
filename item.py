@@ -1,5 +1,4 @@
 from clear import clear
-from typing import Optional
 
 
 class Item:
@@ -8,7 +7,6 @@ class Item:
     def __init__(self, name, desc):
         self.name: str = name
         self.desc: str = desc  # TODO: actually use this value
-        self.location: Optional['Room | Player'] = None  # TODO: do I need quotes or no?
     
     def __repr__(self):
         return f'{self.name}: {self.desc}'
@@ -20,7 +18,6 @@ class Item:
         input("Press enter to continue...")
     
     def put_in_room(self, room: 'Room'):
-        self.location = room
         room.add_item(self)
 
 
@@ -52,3 +49,10 @@ class Armor(Item):
     
     def __repr__(self):
         return f'{self.name}: {self.defense} defense'
+
+
+class Coins(Item):
+    item_type = 'coins'
+    
+    def __init__(self):
+        pass

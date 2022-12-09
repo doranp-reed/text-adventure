@@ -61,9 +61,11 @@ standardize how printing/clearing is implemented
 updates when things change (e.g. monster arrives in room)
 standardize capitliaztion/punctuation in messages
 about command
+allow `insp` command to see equipped items?
 
 ## misc.
-how do I want to make different rooms? should monsters move around a bunch, or should each room be more like a separate challenge?
+how do I want to make different rooms?
+should monsters move around a bunch, or should each room be more like a separate challenge?
 
 ## points (goal)
 2 - weapons (comabat system as well)
@@ -76,6 +78,6 @@ how do I want to make different rooms? should monsters move around a bunch, or s
 4 - save/load game
 ? - about command
 
-# TODO RIGHT NOW
-update `me` to show armor/weapon
-add a way to equip armor/weapon
+# NOW
+class Coins
+monster die Coins

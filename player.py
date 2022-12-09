@@ -13,12 +13,14 @@ class Player:
         self.max_health = 50
         self.alive: bool = True
         self.name: str = get_first_name().lower()  # random name
-        self.weapon = Weapon('Doran\'s blade', 'a basic sword', 10)  # TODO: balance damage and stuff
-        self.armor = Armor('Doran\'s shield', 'a basic shield strapped to your body', 5)
+        self.weapon = Weapon('Doran_blade', 'a basic sword', 10)  # TODO: balance damage and stuff
+        self.armor = Armor('Doran_shield', 'a basic shield strapped to your body', 5)
+        self.coins: int = 5
         updater.register(self)
 
     def __repr__(self):
-        ret_str = f'{self.name}, {self.health}HP\n'
+        ret_str = f'{self.name}, {self.health} health\n'
+        ret_str += f'{self.weapon}\n{self.armor}\n'
 
         if len(self.items) > 0:
             ret_str += 'Items:'
@@ -39,12 +41,14 @@ class Player:
         return False
 
     def pickup(self, item: 'Item'):
-        self.items.append(item)
-        item.location = self
+        self.add_item(item)
         self.location.remove_item(item)
     
     def remove_item(self, item):
         self.items.remove(item)
+    
+    def add_item(self, item: 'Item'):
+        self.items.append(item)
     
     def heal(self, amount: int):
         # old_hp = self.health
@@ -59,7 +63,6 @@ class Player:
 
     def drop(self, item: 'Item'):  # TODO: implement error handling
         self.remove_item(item)
-        item.location = self.location
         self.location.add_item(item)
 
     def show_inventory(self):  # TODO: make cleaner
@@ -85,4 +88,4 @@ class Player:
     
     def die(self):
         self.alive = False
-        updater.deregister(self)  # TODO: is this actually necessary?
+        updater.deregister(self)  # TODO: is this actually necessary? and does it matter either way?

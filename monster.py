@@ -1,7 +1,7 @@
 import random
 import updater
 from names import get_first_name
-from item import Weapon, Armor
+from item import Weapon, Armor, Coins
 
 
 class Monster:
@@ -13,11 +13,11 @@ class Monster:
         self.location: 'Room' = room
         
         weapon_damage = random.randint(5, 20)
-        weapon = Weapon(f'{self.name}\'s sword', f'a sword taken from the body of {self.name}', weapon_damage)
+        weapon = Weapon(f'{self.name}_sword', f'a sword taken from the body of {self.name}', weapon_damage)
         self.weapon: Weapon = weapon
         
         armor_value = random.randint(1, 12)
-        armor = Armor(f'{self.name}\'s armor', f'armor taken from the body of {self.name}', armor_value)
+        armor = Armor(f'{self.name}_armor', f'armor taken from the body of {self.name}', armor_value)
         self.armor: Armor = armor
         
         room.add_monster(self)
@@ -36,8 +36,11 @@ class Monster:
         room.add_monster(self)
     
     def die(self):
-        # drop items in room
-        # TODO: drop random amount of money
+        self.location.add_item(self.weapon)
+        self.location.add_item(self.armor)
+        
+        self.location.add_item(Coins())
+        
         self.location.remove_monster(self)
         updater.deregister(self)
     

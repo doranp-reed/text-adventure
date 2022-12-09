@@ -1,6 +1,6 @@
 from room import Room
 from player import Player
-from item import Item, Potion, Weapon, Armor
+from item import Item, Potion
 from monster import Monster
 import updater
 from clear import clear
@@ -198,12 +198,12 @@ if __name__ == "__main__":
                 
                 if len(command_words) == 2:  # take a specific item
                     target_name = command_words[1]
-                    monster = player.location.get_item_by_name(target_name)
-                    if monster is not False:
-                        if monster.name == 'medal':
+                    item: Item | bool = player.location.get_item_by_name(target_name)
+                    if item is not False:
+                        if item.name == 'medal':
                             print('Congradulations! You win!')
                             playing = False
-                        player.pickup(monster)
+                        player.pickup(item)
                     else:
                         print_status_update('print("No such item.")')
                         # clear()
@@ -228,9 +228,9 @@ if __name__ == "__main__":
 
             case 'drop':  # TODO: change to how I like it
                 target_name = clean_command[5:]  # everything after "drop "
-                monster = player.get_item_by_name(target_name)
-                if monster is not False:
-                    player.drop(monster)
+                item: Item | bool = player.get_item_by_name(target_name)
+                if item is not False:
+                    player.drop(item)
                 else:
                     print('No such item.')
                     continue
@@ -295,10 +295,10 @@ if __name__ == "__main__":
             
             case 'insp':
                 target_name = command_words[1]
-                monster: Item | bool = player.get_item_by_name(target_name)
-                if not monster:  # so it's not in the inventory
-                    monster = player.location.get_item_by_name(target_name)
-                if not monster:  # so it's not in the room either
+                item: Item | bool = player.get_item_by_name(target_name)
+                if not item:  # so it's not in the inventory
+                    item = player.location.get_item_by_name(target_name)
+                if not item:  # so it's not in the room either
                     print('No such item.')
                     continue
                 else:
@@ -306,26 +306,42 @@ if __name__ == "__main__":
             
             case 'use':
                 target_name = command_words[1]
-                monster: Item | Potion | bool = player.get_item_by_name(target_name)
-                if not monster:  # so it's not in the inventory
+                item: Item | Potion | bool = player.get_item_by_name(target_name)
+                if not item:  # so it's not in the inventory
                     print('No such item.')
                     continue
                 # else...
-                item_type: str = monster.item_type
+                item_type: str = item.item_type
                 match item_type:
                     case 'potion':
                         old_hp = player.health
-                        player.heal(monster.heal_value)
-                        player.remove_item(monster)
+                        player.heal(item.heal_value)
+                        player.remove_item(item)
                         clear()
                         print(f'You healed from {old_hp} health to {player.health} health!')
                         input('\nPress enter to continue...')
                     
                     case 'armor':
-                        pass
+                        old_armor = player.armor
+                        new_armor = item
+                        
+                        player.remove_item(new_armor)
+                        player.armor = new_armor
+                        
+                        player.add_item(old_armor)
+                        print(f'You equipped {new_armor.name}.')
+                        input('\nPress enter to continue...')
                     
                     case 'weapon':
-                        pass
+                        old_weapon = player.weapon
+                        new_weapon = item
+                        
+                        player.remove_item(new_weapon)
+                        player.weapon = new_weapon
+                        
+                        player.add_item(old_weapon)
+                        print(f'You equipped {new_weapon.name}.')
+                        input('\nPress enter to continue...')
                     
                     case _:
                         error_message = 'print(\"Not a valid target: please select a weapon, armor, or potion.")'
