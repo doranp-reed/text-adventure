@@ -13,6 +13,9 @@
 ? - take all "command" (1/2)
 2 - random monster generation
 2 - victory condition
+4 - weapons & armor
+3 - loot drops
+2 - healing potions
 
 # starter code modification
 added type hinting, good-practice spacing between functions
