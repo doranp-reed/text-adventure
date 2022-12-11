@@ -25,9 +25,11 @@ class Item:
 class Potion(Item):
     item_type = 'potion'
     
-    def __init__(self, name, desc, hp):
-        super().__init__(name, desc)
+    def __init__(self, hp: int):
         self.heal_value = hp
+        name = 'potion_' + str(hp)
+        desc = f'a potion that heals for {hp} health'
+        super().__init__(name, desc)
 
 
 class Weapon(Item):
@@ -55,7 +57,11 @@ class Armor(Item):
 class Coins(Item):
     item_type = 'coins'
     
-    def __init__(self):
-        self.name: str = 'coins'
-        self.desc: str = 'a pile of coins'
-        self.value = randint(1, 7)
+    def __init__(self, value):
+        self.value = value
+        desc = f'a pile of {self.value} coins'
+        super().__init__('coins', desc)
+
+
+class WinCondition(Item):
+    item_type = 'victory'

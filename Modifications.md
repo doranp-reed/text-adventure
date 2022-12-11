@@ -1,7 +1,6 @@
-# TOTAL POINTS (13/20)
+# TOTAL POINTS (?)
 1 - 'drop' command
-1 - command abbreviations
-? - access everything by single word (1) (somewhat part of comm. abbrev.)
+3 - command abbreviations: access everything by 1 word, shorter names, can even do commands with 1-letter calls
 1 - 'wait' command
 ? - player name (1)
 ? - hidden dev command (?)
@@ -17,6 +16,7 @@
 3 - loot drops
 2 - healing potions
 
+<!--
 # starter code modification
 added type hinting, good-practice spacing between functions
 extracted `clear()` function to its own file
@@ -33,3 +33,4 @@ changing functionality so everything is accessible by a single word (e.g. monste
 
 # drop command
 added drop command
+-->

@@ -82,5 +82,19 @@ should monsters move around a bunch, or should each room be more like a separate
 class Coins
 monster die Coins
 
-pickup all coins
+~~pickup all coins OR combine coin piles~~
 monsters drop potion?
+
+# Feedback!
+misspelled item names -> no good error message
+item names too long/not viewable when typing
+
+## solutions
+clearer error message when typing
+maybe `use` command brings to new view where you can see the inventory
+
+<!--
+# also...
+short (really short) commands - g for go, i for inv, etc.
+change how medal works so you need to `use` it
+-->

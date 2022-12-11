@@ -1,7 +1,7 @@
 import random
 import updater
 from names import get_first_name
-from item import Weapon, Armor, Coins
+from item import Weapon, Armor, Coins, Potion
 
 
 class Monster:
@@ -35,11 +35,26 @@ class Monster:
         self.location = room
         room.add_monster(self)
     
+    def drop_coins(self):
+        this_room: 'Room' = self.location
+        coins_in_this_room = 0
+        for item in this_room.items:
+            if item.item_type == 'coins':
+                coins_in_this_room += item.value  # sum the coins in the room
+                this_room.remove_item(item)  # ...and make sure to not duplicate coins :)
+        
+        coins_in_this_room += random.randint(1, 7)  # add the monster's dropped coins
+        
+        self.location.add_item(Coins(coins_in_this_room))
+    
     def die(self):
         self.location.add_item(self.weapon)
         self.location.add_item(self.armor)
+        self.drop_coins()
         
-        self.location.add_item(Coins())
+        if random.random() < 0.4:  # random chance to drop a healing potion
+            heal_val = random.choice([15, 20, 25, 30, 35])  # picks a random healing value
+            self.location.add_item(Potion(heal_val))
         
         self.location.remove_monster(self)
         updater.deregister(self)
