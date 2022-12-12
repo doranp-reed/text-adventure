@@ -1,4 +1,3 @@
-from clear import clear
 from typing import Optional
 from names import get_first_name
 import updater
@@ -71,16 +70,6 @@ class Player:
     def drop(self, item: 'Item'):  # TODO: implement error handling
         self.remove_item(item)
         self.location.add_item(item)
-
-    def show_inventory(self):  # TODO: make cleaner
-        clear()
-        if len(self.items) != 0:
-            print("You are currently carrying:\n")
-            for i in self.items:
-                print(i.name)
-        else:
-            print('You are currently carrying no items.')
-        input("\nPress enter to continue...")
 
     def attack(self, mon: 'Monster'):
         attack_damage = self.weapon.damage

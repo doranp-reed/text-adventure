@@ -1,7 +1,3 @@
-from clear import clear
-from random import randint
-
-
 class Item:
     item_type = 'nothing special'
     
@@ -11,12 +7,6 @@ class Item:
     
     def __repr__(self):
         return f'{self.name}: {self.desc}'
-
-    def describe(self):
-        clear()
-        print(self.desc)
-        print()
-        input("Press enter to continue...")
     
     def put_in_room(self, room: 'Room'):
         room.add_item(self)

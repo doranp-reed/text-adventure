@@ -76,7 +76,8 @@ should monsters move around a bunch, or should each room be more like a separate
 2 - healing potions
 4 - currency/merchant
 4 - save/load game?
-? - about command
+? - about command (1)
+1 - more comm. abbrev?
 
 # Feedback!
 misspelled item names -> no good error message
@@ -90,10 +91,12 @@ maybe `use` command brings to new view where you can see the inventory
 overhealing in fighting
 add a way to bail from fights
 remove passive healing?
-decide on what updates the game and what doesn't
+decide on what updates the game and what doesn't (give up on the `command_success` concept?)
 too many item drops?
 balance the combat!
 100 hp?
+merchant/way of spending money
+room names/descriptions
 
 <!--
 # also...
