@@ -12,11 +12,11 @@ class Monster:
         self.health: int = health  # TODO: decide if this is always an int or not
         self.location: 'Room' = room
         
-        weapon_damage = random.randint(5, 20)
+        weapon_damage = random.randint(5, 12)
         weapon = Weapon(f'{self.name}_sword', f'a sword taken from the body of {self.name}', weapon_damage)
         self.weapon: Weapon = weapon
         
-        armor_value = random.randint(1, 12)
+        armor_value = random.randint(1, 8)
         armor = Armor(f'{self.name}_armor', f'armor taken from the body of {self.name}', armor_value)
         self.armor: Armor = armor
         

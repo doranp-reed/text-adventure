@@ -221,6 +221,7 @@ if __name__ == "__main__":
                     player.drop(item)
                 else:
                     print('No such item.')
+                    input('\nPress enter to continue...')
                     continue
 
             case 'w' | 'wait':
@@ -298,7 +299,7 @@ if __name__ == "__main__":
             
             case 'u' | 'use':
                 target_name = command_words[1]
-                item: Item | 'Potion' | bool = player.get_item_by_name(target_name)
+                item: 'Item | Potion | bool' = player.get_item_by_name(target_name)
                 if not item:  # so it's not in the inventory
                     print('No such item.')
                     continue
@@ -347,7 +348,7 @@ if __name__ == "__main__":
 
             case _:  # other cases
                 print("Not a valid command ('help' for a list of options)")
-                print('\nPress enter to continue...')
+                input('\nPress enter to continue...')
                 continue
 
         # outside of the `match-case` block, but still in the `while` loop

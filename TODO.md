@@ -75,15 +75,8 @@ should monsters move around a bunch, or should each room be more like a separate
 3 - loot
 2 - healing potions
 4 - currency/merchant
-4 - save/load game
+4 - save/load game?
 ? - about command
-
-# NOW
-class Coins
-monster die Coins
-
-~~pickup all coins OR combine coin piles~~
-monsters drop potion?
 
 # Feedback!
 misspelled item names -> no good error message
@@ -92,6 +85,15 @@ item names too long/not viewable when typing
 ## solutions
 clearer error message when typing
 maybe `use` command brings to new view where you can see the inventory
+
+# Now...
+overhealing in fighting
+add a way to bail from fights
+remove passive healing?
+decide on what updates the game and what doesn't
+too many item drops?
+balance the combat!
+100 hp?
 
 <!--
 # also...
