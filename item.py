@@ -1,5 +1,6 @@
 class Item:
     item_type = 'nothing special'
+    usable = False
     
     def __init__(self, name, desc):
         self.name: str = name
@@ -14,6 +15,7 @@ class Item:
 
 class Potion(Item):
     item_type = 'potion'
+    usable = True
     
     def __init__(self, hp: int):
         self.heal_value = hp
@@ -24,6 +26,7 @@ class Potion(Item):
 
 class Weapon(Item):
     item_type = 'weapon'
+    usable = True
     
     def __init__(self, name, desc, damage):
         super().__init__(name, desc)
@@ -35,6 +38,7 @@ class Weapon(Item):
 
 class Armor(Item):
     item_type = 'armor'
+    usable = True
     
     def __init__(self, name, desc, defense):
         super().__init__(name, desc)
@@ -46,6 +50,7 @@ class Armor(Item):
 
 class Coins(Item):
     item_type = 'coins'
+    usable = False
     
     def __init__(self, value):
         self.value = value
@@ -55,3 +60,4 @@ class Coins(Item):
 
 class WinCondition(Item):
     item_type = 'victory'
+    usable = True

@@ -68,35 +68,32 @@ how do I want to make different rooms?
 should monsters move around a bunch, or should each room be more like a separate challenge?
 
 ## points (goal)
-2 - weapons (comabat system as well)
-2 - armor
+~~2 - weapons (comabat system as well)~~
+~~2 - armor~~
 3 - more/different monsters (two or three normal types, maybe boss)
 2 - bigger world
-3 - loot
-2 - healing potions
+~~3 - loot~~
+~~2 - healing potions~~
 4 - currency/merchant
-4 - save/load game?
-? - about command (1)
-1 - more comm. abbrev?
-
-# Feedback!
-misspelled item names -> no good error message
-item names too long/not viewable when typing
-
-## solutions
-clearer error message when typing
-maybe `use` command brings to new view where you can see the inventory
+<!-- 4 - save/load game? -->
+~~? - about command (1)~~
+~~1 - more comm. abbrev~~
 
 # Now...
-overhealing in fighting
 add a way to bail from fights
-remove passive healing?
-decide on what updates the game and what doesn't (give up on the `command_success` concept?)
-too many item drops?
-balance the combat!
-100 hp?
+more clarity on HP during fights
+
+updates
+- remove passive healing?
+- change frequency of updates?
+- decide on what updates the game and what doesn't
+- give up on the `command_success` concept?
+
+balance combat!
 merchant/way of spending money
 room names/descriptions
+
+change all item-accessing so you only need its number?
 
 <!--
 # also...

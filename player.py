@@ -1,5 +1,4 @@
 from typing import Optional
-from names import get_first_name
 import updater
 from item import Weapon, Armor
 
@@ -8,10 +7,10 @@ class Player:
     def __init__(self):
         self.location: Optional['Room'] = None  # TODO: see if I can stop the linter from warning here
         self.items: list['Item'] = []  # TODO: decide on if I need the quotes or not
-        self.health: int = 50  # TODO: decide if this will always be an int
-        self.max_health = 50
+        self.health: int = 100
+        self.max_health = 100
         self.alive: bool = True
-        self.name: str = get_first_name().lower()  # random name
+        self.name: str = 'Doran'  # this will never appear because it gets re-assigned at the start of the game
         self.weapon = Weapon('Doran_blade', 'a basic sword', 10)  # TODO: balance damage and stuff
         self.armor = Armor('Doran_shield', 'a basic shield strapped to your body', 5)
         self.coins: int = 5
@@ -78,7 +77,7 @@ class Player:
     
     def get_hit(self, damage_amount: int):
         actual_damage = damage_amount - self.armor.defense
-        self.health -= actual_damage
+        self.health -= max(actual_damage, 0)  # so there's no "healing"
     
     def update(self):
         self.heal(1)

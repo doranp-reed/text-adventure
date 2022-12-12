@@ -19,7 +19,8 @@ command_help = {'help': '[command] -- prints list of options or help on given co
                 'wait': '[rounds] -- waits the given number of rounds (default 1)',
                 'me': '-- shows information about you: name, health, items, etc.',
                 'look': '<item> -- looks at an item in the room or inventory',
-                'use': '<item> -- uses item in inventory'}
+                'use': '-- uses an item in inventory',
+                'about': '-- gives information about the game'}
 
 
 def create_world():
@@ -35,8 +36,6 @@ def create_world():
     i1.put_in_room(b)
     i2 = Item('stick', 'it\'s a stick!')
     i2.put_in_room(c)
-    i3 = WinCondition('medal', 'Win the game!')
-    i3.put_in_room(d)
     player.location = a
     Monster(20, b)
 
@@ -46,6 +45,7 @@ def clear():
 
 
 def enter_to_continue():  # If I ever decide to change the message, I only need to change one thing
+    """Press enter to continue..."""
     input('\nPress enter to continue...')
 
 
@@ -137,7 +137,12 @@ def show_long_help(comm: str):
             print('The \'use\' or \'u\' command is for using an item in your inventory.')
             print('If given a potion, it will consume the potion and heal you;')
             print('If given a weapon or armor, it will equip that and remove your current weapon or armor.')
-            print('Enter \'use <item>\' to use an item. Note that it must be in your inventory first.')
+            print('Enter \'use\' to see usable items in your inventory, then enter the item\'s name to use it.')
+            print('Note that the item must be in your inventory to be used.')
+        
+        case 'about':
+            print('The \'about\' or \'a\' command is used to see information about the game.')
+            print('Enter \'about\' to see why you\'re here, as well as credits to all who helped!')
 
         case _:
             print(f'Sorry, there is no information available for {comm}')
@@ -196,7 +201,9 @@ if __name__ == "__main__":
                     if item is not False:
                         player.pickup(item)
                     else:
-                        print_status_update(f'print("There is no item named \"{target_name}\" in this room.")')
+                        # the triple-backslash is so that the string passed to `exec` will have `\"`
+                        # (I need to escape the backslash, then escape the quote. `exec` is weird)
+                        print_status_update(f'print("There is no item named \\\"{target_name}\\\" in this room.")')
                         continue
                 else:  # only 'take' was given, so take all
                     if len(player.location.items) == 0:
@@ -216,7 +223,7 @@ if __name__ == "__main__":
                 if item is not False:
                     player.drop(item)
                 else:
-                    print_status_update(f'print("There is no item named \"{target_name}\" in your inventory.")')
+                    print_status_update(f'print("There is no item named \\\"{target_name}\\\" in your inventory.")')
                     continue
 
             case 'w' | 'wait':
@@ -249,14 +256,14 @@ if __name__ == "__main__":
                     show_long_help(command_words[1])
                 continue
 
-            case 'q' | "quit":
+            case 'q' | 'quit':
                 break  # breaks out of the `while player.alive` loop
 
-            case 'f' | "fight":
+            case 'f' | 'fight':
                 target_name = command_words[1]
                 monster: Monster | bool = player.location.get_monster_by_name(target_name)
                 if monster is False:
-                    print_status_update(f'print("There is no monster named \"{target_name}\" in this room.")')
+                    print_status_update(f'print("There is no monster named \\\"{target_name}\\\" in this room.")')
                     continue
                 # else...  # TODO: modify if I change how I deal with `continue`
                 while True:
@@ -301,12 +308,31 @@ if __name__ == "__main__":
                     print_status_update('print(item)')
             
             case 'u' | 'use':
-                target_name = command_words[1]
-                item: 'Item | Potion | bool' = player.get_item_by_name(target_name)
-                if not item:  # so it's not in the inventory
-                    print_status_update(f'print("There is no item named {target_name} in your inventory.")')
+                clear()
+                usable_items: list[type[Item]] = [i for i in player.items if i.usable]  # list of all the `usable` items
+            
+                if not usable_items:  # if the list is empty (no usable items)
+                    print('There are no usable items in your inventory.')
+                    print('Usable items include: potions, armor, weapons, and scrolls.')
+                    enter_to_continue()
                     continue
+                
                 # else...
+                for index, item in enumerate(usable_items):
+                    print(str(index+1), item.name)  # note that this starts at 1, so other numbers are modified as such
+                target_item_index: str = input('\nWhat would you like to use? (enter the item number) ')
+                
+                # this next part I had to do because if you call `int` on a non-int it'll throw an error, so instead
+                # I decided to compare the input to other strings
+                valid_options: list[str] = [str(x+1) for x in range(len(usable_items))]
+                
+                if target_item_index not in valid_options:  # so it's not a number within the required range
+                    print(f'\\\"{target_item_index}\\\" is not a valid item number.')
+                    enter_to_continue()
+                    continue
+                
+                # else...                
+                item: type[Item] = usable_items[int(target_item_index) - 1]  # minus 1 because input is 1-n
                 item_type: str = item.item_type
                 match item_type:
                     case 'potion':
@@ -336,15 +362,25 @@ if __name__ == "__main__":
                         print_status_update("print(f'You equipped {new_weapon.name}.')")
                     
                     case 'victory':
-                        print('Congratulations! You win!')  # TODO: change if victory condition changes (story-wise)
+                        print('Congratulations! You win!')  # TODO: change description
                         break
                     
-                    case _:
-                        error_message = 'print(\"Not a valid target: please select a weapon, armor, potion, or medal.")'
-                        # TODO: change above line if win con changes
-                        print_status_update(error_message)  # this is so my lines aren't too long
-                        continue
+                    case _:  # this should never trigger
+                        print('Oops! Something went wrong, contact your local developer to get it fixed!')  # :)
+                        break
 
+            case 'a' | 'about':
+                clear()
+                print('Welcome to the dungeon!')
+                print('You are a brave adventurer, here to defeat monsters in your path')
+                print('and find the legendary scroll of wisdom, said to give the knowledge')
+                print('of immortality to any who reads it.\n')
+                print('This game was made by Doran with help from TaiyuC,')
+                print('as an assignment for professor Dylan McNamee\'s class.')
+                print('See all who helped make this game possible on the GitHub page:')
+                print('https://github.com/doranp-reed/text-adventure')
+                enter_to_continue()
+            
             case _:  # other cases
                 print("Not a valid command ('help' for a list of options)")
                 enter_to_continue()

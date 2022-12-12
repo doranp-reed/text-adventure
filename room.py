@@ -1,12 +1,12 @@
 import random
 import updater
-from monster import Monster
+from monster import Roamer
 
 
 class Room:
     def __init__(self, desc: str):
         self.desc: str = desc
-        self.monsters: list[Monster] = []
+        self.monsters: list[type['Monster']] = []
         self.exits: list[list[str, 'Room']] = []
         self.items: list['Item'] = []
         updater.register(self)
@@ -35,10 +35,10 @@ class Room:
     def remove_item(self, item: 'Item'):
         self.items.remove(item)
 
-    def add_monster(self, monster: Monster):
+    def add_monster(self, monster: type['Monster']):
         self.monsters.append(monster)
 
-    def remove_monster(self, monster: Monster):
+    def remove_monster(self, monster: type['Monster']):
         self.monsters.remove(monster)
 
     def has_items(self):
@@ -53,10 +53,10 @@ class Room:
     def has_monsters(self):
         return self.monsters != []
 
-    def get_monster_by_name(self, name: str) -> Monster | bool:
-        for i in self.monsters:
-            if i.name.lower() == name.lower():
-                return i
+    def get_monster_by_name(self, name: str) -> type['Monster'] | bool:
+        for monster in self.monsters:
+            if monster.name == name.lower():
+                return monster
         return False
 
     def random_neighbor(self):
@@ -64,4 +64,4 @@ class Room:
     
     def update(self):
         if random.random() < .1:
-            Monster(10, self)
+            Roamer(10, self)
