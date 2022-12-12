@@ -20,6 +20,7 @@ class Player:
     def __repr__(self):
         ret_str = f'{self.name}, {self.health} health\n'
         ret_str += f'{self.weapon}\n{self.armor}\n'
+        ret_str += f'{self.coins} coins\n'
 
         if len(self.items) > 0:
             ret_str += 'Items:'
