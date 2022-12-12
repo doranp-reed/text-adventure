@@ -4,7 +4,7 @@ from item import Item, WinCondition
 from monster import Monster
 import updater
 from time import sleep
-from os import system as os_system
+from os import system as os_system  # only import what you need
 from os import name as os_name
 
 
@@ -23,10 +23,10 @@ command_help = {'help': '[command] -- prints list of options or help on given co
 
 
 def create_world():
-    a = Room("You are in room 1.")
-    b = Room("You are in room 2.")
-    c = Room("You are in room 3.")
-    d = Room("You are in room 4.")
+    a = Room("room 1")
+    b = Room("room 2")
+    c = Room("room 3")
+    d = Room("room 4")
     Room.connect_rooms(a, "east", b, "west")
     Room.connect_rooms(c, "east", d, "west")
     Room.connect_rooms(a, "north", c, "south")
@@ -51,8 +51,7 @@ def enter_to_continue():  # If I ever decide to change the message, I only need 
 
 def print_situation():
     clear()
-    print(player.location.desc)
-    print()
+    print(f'You are in {player.location.desc}\n')
     if player.location.has_monsters():
         print("This room contains the following monsters:")
         for m in player.location.monsters:

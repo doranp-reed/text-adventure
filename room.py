@@ -4,8 +4,8 @@ from monster import Monster
 
 
 class Room:
-    def __init__(self, description: str):
-        self.desc: str = description
+    def __init__(self, desc: str):
+        self.desc: str = desc
         self.monsters: list[Monster] = []
         self.exits: list[list[str, 'Room']] = []
         self.items: list['Item'] = []
