@@ -74,7 +74,7 @@ should monsters move around a bunch, or should each room be more like a separate
 2 - bigger world
 ~~3 - loot~~
 ~~2 - healing potions~~
-4 - currency/merchant
+~~4 - currency/merchant~~
 <!-- 4 - save/load game? -->
 ~~? - about command (1)~~
 ~~1 - more comm. abbrev~~
@@ -90,13 +90,17 @@ updates
 - give up on the `command_success` concept?
 
 balance combat!
-merchant/way of spending money
 room names/descriptions
 
 change all item-accessing so you only need its number?
 
-<!--
-# also...
-short (really short) commands - g for go, i for inv, etc.
-change how medal works so you need to `use` it
--->
+# The rest of my time
+
+## necessary
+bigger world
+escaping combat
+more clarity in combat output
+entrapping monster
+
+## ideal
+change item-accessing so everything is by number? (no names required)

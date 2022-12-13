@@ -4,12 +4,13 @@ from names import get_first_name
 from item import Weapon, Armor, Coins, Potion, WinCondition
 
 
-class Monster:
+class Monster:  # base class
     monster_type = 'monster'
 
     def __init__(self, health: int, room: 'Room'):  # TODO: decide on if hints should be in arguments or values        
         self.name: str = get_first_name().lower()
-        self.health: int = health  # TODO: decide if this is always an int or not
+        self.health: int = health
+        self.max_health: int = health  # monsters also passively heal
         self.location: 'Room' = room
         
         weapon_damage = random.randint(5, 12)
@@ -25,9 +26,13 @@ class Monster:
 
     def __repr__(self):
         return f'{self.name} the {self.monster_type}'
+    
+    def heal(self, value: int):
+        self.health += value
+        self.health = min(self.health, self.max_health)
 
-    def update(self):
-        pass  # generic monsters have no update & don't roam by default
+    def update(self):  # generic monsters don't roam, but they do heal over time
+        self.heal(1)
     
     def drop_coins(self):
         this_room: 'Room' = self.location
@@ -115,5 +120,5 @@ class Guardian(Monster):  # there is only one guardian, and it holds the win con
         updater.deregister(self)
 
 
-class Entrapper(Monster):
-    pass  # TODO
+class Entrapper(Monster):  # player can't run away from combat
+    monster_type = 'entrapper'

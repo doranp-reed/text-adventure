@@ -100,7 +100,7 @@ def show_long_help(comm: str):
         case 'go':
             print('The \'go\' or \'g\' command is used to move between rooms.')
             print('Enter \'go <direction>\' to move to the room in the given direction.')
-            # print('If there is no room in the given direction, you will not be moved anywhere.')
+            print('The direction can either be a full name, like \'north\', or a single letter, like \'n\'.')
 
         case 'inv':
             print('The \'inv\' or \'i\' command is used to see your inventory.')
@@ -203,7 +203,7 @@ if __name__ == "__main__":
             case 'g' | "go":
                 okay = player.go_direction(command_words[1])
                 if not okay:
-                    print_status_update('print("You can\'t go that way.")')
+                    print_status_update('print("There\'s a wall there!")')
                     continue
 
             case 't' | "take":                

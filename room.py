@@ -17,7 +17,7 @@ class Room:
 
     def get_destination(self, direction: str):
         for e in self.exits:
-            if e[0] == direction:
+            if (e[0] == direction) or (e[0][0] == direction):  # so you can do 'n' for 'north'
                 return e[1]
         return self
 
