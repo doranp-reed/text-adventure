@@ -7,7 +7,7 @@ from item import Weapon, Armor, Coins, Potion, WinCondition
 class Monster:
     monster_type = 'monster'
 
-    def __init__(self, health, room):  # TODO: decide on if hints should be in arguments or values
+    def __init__(self, health: int, room: 'Room'):  # TODO: decide on if hints should be in arguments or values        
         self.name: str = get_first_name().lower()
         self.health: int = health  # TODO: decide if this is always an int or not
         self.location: 'Room' = room
@@ -94,6 +94,7 @@ class Guardian(Monster):  # there is only one guardian, and it holds the win con
 
         room.add_monster(self)
         updater.register(self)
+        
     
     def die(self):
         # the item drops are big because this is the final boss: if the player wants to they can continue to play

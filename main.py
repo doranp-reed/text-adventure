@@ -1,6 +1,6 @@
 from room import Room
 from player import Player
-from item import Item, WinCondition
+from item import Item, Weapon, Armor, Potion
 from monster import Monster
 import updater
 from time import sleep
@@ -20,7 +20,8 @@ command_help = {'help': '[command] -- prints list of options or help on given co
                 'me': '-- shows information about you: name, health, items, etc.',
                 'look': '<item> -- looks at an item in the room or inventory',
                 'use': '-- uses an item in inventory',
-                'about': '-- gives information about the game'}
+                'about': '-- gives information about the game',
+                'shop': '-- shows items for purchase from the merchant (if in the room)'}
 
 
 def create_world():
@@ -36,7 +37,10 @@ def create_world():
     i1.put_in_room(b)
     i2 = Item('stick', 'it\'s a stick!')
     i2.put_in_room(c)
+    # i3 = WinCondition('fake_scroll', 'for testing purposes')  # TODO: remove before final submission
+    # i3.put_in_room(a)
     player.location = a
+    c.has_merchant = True  # right now just hard-coding where the merchant is
     Monster(20, b)
 
 
@@ -52,6 +56,8 @@ def enter_to_continue():  # If I ever decide to change the message, I only need 
 def print_situation():
     clear()
     print(f'You are in {player.location.desc}\n')
+    if player.location.has_merchant:
+        print('This room has Gregor the merchant!\n')
     if player.location.has_monsters():
         print("This room contains the following monsters:")
         for m in player.location.monsters:
@@ -143,6 +149,11 @@ def show_long_help(comm: str):
         case 'about':
             print('The \'about\' or \'a\' command is used to see information about the game.')
             print('Enter \'about\' to see why you\'re here, as well as credits to all who helped!')
+        
+        case 'shop':
+            print('The \'shop\' or \'s\' command is used to purchase items from a merchant.')
+            print('Enter \'shop\' to open a menu where you can see what the merchant has available and select an item.')
+            print('If you have enough money the merchant will take your money and give you the requested item.')
 
         case _:
             print(f'Sorry, there is no information available for {comm}')
@@ -167,7 +178,7 @@ if __name__ == "__main__":
     print('Be very careful: a single wrong keystroke could end your time here!\n')
     player.name = input("What is your name? ")
     print('\nWelcome, ' + player.name + '!')
-    sleep(2)
+    sleep(1.5)
     clear()
 
     while player.alive:
@@ -183,7 +194,8 @@ if __name__ == "__main__":
         if len(command_words) == 0:
             continue
         
-        if len(command_words) > 2:  # no commands are more than two words total (verb and object)
+        # no commands are more than two words total (verb and object), except for 'dev' commands (which are special)
+        if (len(command_words) > 2) and command_words[0] != 'dev':
             print_status_update("print('Sorry, too many directions given.')")
             continue
 
@@ -257,15 +269,26 @@ if __name__ == "__main__":
                 continue
 
             case 'q' | 'quit':
+                print('Goodbye!\n')
                 break  # breaks out of the `while player.alive` loop
 
             case 'f' | 'fight':
+                if len(command_words) == 1:
+                    print('Please enter a monster\'s name to fight.')
+                    enter_to_continue()
+                    continue
+                
                 target_name = command_words[1]
                 monster: Monster | bool = player.location.get_monster_by_name(target_name)
                 if monster is False:
                     print_status_update(f'print("There is no monster named \\\"{target_name}\\\" in this room.")')
                     continue
                 # else...  # TODO: modify if I change how I deal with `continue`
+                
+                if monster.name == 'doran':  # easter egg! (small chance that monster spawns with name 'doran') :)
+                    print('\nWait, what? You\'re trying to fight the creator of this game?')
+                    input('As you wish...')
+                
                 while True:
                     clear()
                     print(f'You are fighting {monster}.')
@@ -274,11 +297,15 @@ if __name__ == "__main__":
                     if monster.health <= 0:
                         monster.die()
                         print(f'You attack {monster}. It dies!')
+                        if monster.name == 'doran':
+                            print('\nDid you just... kill him? How can this be? What have you done?')
                         enter_to_continue()
                         break
                     monster.attack(player)
                     if player.health <= 0:
                         player.die()
+                        if monster.name == 'doran':
+                            print('\nHa! That\'ll teach you to never mess with your maker!\n')
                         print(f'Oh no! {monster} killed you!')
                         enter_to_continue()
                         break
@@ -362,7 +389,19 @@ if __name__ == "__main__":
                         print_status_update("print(f'You equipped {new_weapon.name}.')")
                     
                     case 'victory':
-                        print('Congratulations! You win!')  # TODO: change description
+                        print('You unwind the scroll and begin to read its contents.')
+                        sleep(3)
+                        print('A blue mist begins to swirl around you and your eyes move across the lines,')
+                        sleep(2)
+                        print('faster and faster as you begin to understand,')
+                        sleep(1)
+                        print('to learn this knowledge forbidden to mortals...\n')
+                        sleep(5)
+                        print('Congratulations! You have conquered the dungeon and learned the secrets of immortality!')
+                        sleep(0.5)
+                        print('You win the game!')
+                        sleep(1)
+                        print('\nThe End')
                         break
                     
                     case _:  # this should never trigger
@@ -381,6 +420,59 @@ if __name__ == "__main__":
                 print('https://github.com/doranp-reed/text-adventure')
                 enter_to_continue()
             
+            case 's' | 'shop':
+                if not player.location.has_merchant:
+                    print_status_update("print('You are not in a room with a merchant, you cannot shop!')")
+                    continue
+                # else...
+                
+                clear()
+                print('Gregor: Welcome to my humble store! You\'re lucky you found me in this dark place.')
+                print('Gregor: Here you can buy some weapons and armor, as well as potions for the road ahead.')
+                print('And don\'t think of trying to sell me anything: I ain\'t dumb enough to buy what you\'ve got!')
+                print('Here\'s what I\'ve got!\n')
+                # maybe sometime later I'd add the ability to sell to him, but right now you can just buy
+                
+                shop_weapon = Weapon('generic_sword', 'a sword bought from Gregor the merchant', 20)
+                shop_armor = Armor('generic_armor', 'armor bought from Gregot the merchant', 10)
+                pot_15 = Potion(15)
+                pot_25 = Potion(25)
+                pot_35 = Potion(35)
+                
+                item_list: list[list[Item, int]] = [[shop_weapon, 50],
+                                                    [shop_armor, 50],
+                                                    [pot_15, 15],
+                                                    [pot_25, 25],
+                                                    [pot_35, 35]]
+                
+                for index, item in enumerate(item_list):
+                    print(f'{index+1} {item[0]}: {item[1]} coins')  # getting type error here, but seems to be fine?
+                
+                request = input(f'\nYou have {player.coins} coins.\nWhat would you like to buy? (enter item number) ')
+                
+                valid_options: list[str] = [str(x+1) for x in range(len(item_list))]  # this is like in 'use' section
+                
+                if request not in valid_options:
+                    print(f'Are you crazy? There\'s no item numbered \"{request}\"!')
+                    enter_to_continue()
+                    continue
+                
+                # else...
+                request_index = int(request) - 1
+                requested_item: list = item_list[request_index]  # note that this is the item-cost list, not the item
+                
+                item_cost = requested_item[1]
+                
+                if item_cost > player.coins:
+                    print(f'What are you trying to pull? You only have {player.coins} coins! You need {item_cost}!')
+                    enter_to_continue()
+                    continue
+                # else...
+                player.remove_coins(item_cost)
+                player.add_item(requested_item[0])  # TODO: make sure this works!
+                print(f'Gregor: Here\'s your {requested_item[0]}! Good doing business with you!')
+                enter_to_continue()
+            
             case _:  # other cases
                 print("Not a valid command ('help' for a list of options)")
                 enter_to_continue()
@@ -390,7 +482,5 @@ if __name__ == "__main__":
         updater.update_all()  # TODO: decide on how I want to do updating
     
     # outside of the `while` loop, but still in the `if __name__ == "__main__"` block
-    if player.alive:
-        print('Goodbye!\n')
-    else:
+    if not player.alive:
         print('You died. The end!\n')

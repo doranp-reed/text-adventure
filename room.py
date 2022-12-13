@@ -9,6 +9,7 @@ class Room:
         self.monsters: list[type['Monster']] = []
         self.exits: list[list[str, 'Room']] = []
         self.items: list['Item'] = []
+        self.has_merchant: bool = False
         updater.register(self)
 
     def add_exit(self, exit_name: str, destination: 'Room'):

@@ -56,6 +56,9 @@ class Player:
     def add_coins(self, value: int):
         self.coins += value
     
+    def remove_coins(self, value: int):
+        self.coins -= value
+    
     def heal(self, amount: int):
         # old_hp = self.health
         self.health += amount
