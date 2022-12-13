@@ -19,7 +19,8 @@ class Room:
         for e in self.exits:
             if (e[0] == direction) or (e[0][0] == direction):  # so you can do 'n' for 'north'
                 return e[1]
-        return self
+        # return self  # WAIT A MOMENT, IS THIS BROKEN?
+        return None
 
     @classmethod
     def connect_rooms(cls, room1: 'Room', dir1: str, room2: 'Room', dir2: str):
