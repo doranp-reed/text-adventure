@@ -28,11 +28,6 @@ class Monster:
 
     def update(self):
         pass  # generic monsters have no update & don't roam by default
-
-    def move_to(self, room: 'Room'):
-        self.location.remove_monster(self)
-        self.location = room
-        room.add_monster(self)
     
     def drop_coins(self):
         this_room: 'Room' = self.location
@@ -74,6 +69,14 @@ class Monster:
 class Roamer(Monster):  # roamers are lower-health and move around
     monster_type = 'roamer'
     
+    def move_to(self, room: 'Room'):
+        if room.has_merchant:  # monsters can't move into merchant room
+            return  # this does mean that monsters may "pile up" outside the merchant room , but I like that idea
+
+        self.location.remove_monster(self)
+        self.location = room
+        room.add_monster(self)
+    
     def update(self):  # defining feature is that they move from room to room
         self.move_to(self.location.random_neighbor())
 
@@ -94,7 +97,6 @@ class Guardian(Monster):  # there is only one guardian, and it holds the win con
 
         room.add_monster(self)
         updater.register(self)
-        
     
     def die(self):
         # the item drops are big because this is the final boss: if the player wants to they can continue to play
@@ -111,3 +113,7 @@ class Guardian(Monster):  # there is only one guardian, and it holds the win con
 
         self.location.remove_monster(self)
         updater.deregister(self)
+
+
+class Entrapper(Monster):
+    pass  # TODO

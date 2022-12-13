@@ -64,5 +64,5 @@ class Room:
         return random.choice(self.exits)[1]
     
     def update(self):
-        if random.random() < .1:
+        if (random.random() < .1) and self.has_merchant is False:  # monsters can't spawn in merchant room
             Roamer(10, self)
