@@ -20,7 +20,7 @@ class Potion(Item):
     def __init__(self, hp: int):
         self.heal_value = hp
         name = 'potion_' + str(hp)
-        desc = f'a potion that heals for {hp} health'
+        desc = f'{hp} health'
         super().__init__(name, desc)
 
 

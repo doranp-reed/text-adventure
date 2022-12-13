@@ -75,7 +75,8 @@ class Roamer(Monster):  # roamers are lower-health and move around
     monster_type = 'roamer'
     
     def move_to(self, room: 'Room'):
-        if (room.room_type == 'shop') or (room.room_type == 'trap'):  # monsters can't move into merchant or trap room
+        invalid_options = ['shop', 'trap', 'lair']
+        if room.room_type in invalid_options:  # monsters can't move into most special rooms
             return  # this does mean that roamers may "pile up" outside these rooms, but I like that idea
 
         self.location.remove_monster(self)
@@ -88,6 +89,7 @@ class Roamer(Monster):  # roamers are lower-health and move around
 
 class Guardian(Monster):  # there is only one guardian, and it holds the win condition
     monster_type = 'guardian'
+    
     def __init__(self, health, room):
         self.health = health
         self.location: 'Room' = room

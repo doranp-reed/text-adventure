@@ -1,6 +1,7 @@
-import random
+from random import random as random_random
+from random import choice as random_choice
 import updater
-from monster import Roamer, Entrapper
+from monster import Roamer, Entrapper, Guardian
 
 
 class Room:
@@ -63,10 +64,10 @@ class Room:
         return False
 
     def random_neighbor(self):
-        return random.choice(self.exits)[1]
+        return random_choice(self.exits)[1]
     
     def update(self):
-        if (random.random() < .1):
+        if random_random() < .1:
             Roamer(10, self)
 
 
@@ -89,6 +90,17 @@ class Trap(Room):  # player cannot leave until they've killed all of the entrapp
         pass  # monsters don't spawn in trap room
 
 
-class Lair(Room):  # spawns a roamer every round
+class Nest(Room):  # spawns way more roamers
+    room_type = 'nest'
+    
     def update(self):
-        Roamer(10, self)
+        if random_random() < 0.6:
+            Roamer(10, self)
+
+
+class Lair(Room):  # location of the Guardian
+    room_type = 'lair'
+    
+    def __init__(self, desc: str):
+        super().__init__(desc)
+        Guardian(100, self)

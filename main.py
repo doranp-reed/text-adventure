@@ -1,11 +1,12 @@
-from room import Room, Shop, Trap
+from room import Room, Shop, Trap, Nest, Lair
 from player import Player
 from item import Item, Weapon, Armor, Potion
-from monster import Monster, Guardian
+from monster import Monster
 import updater
 from time import sleep
 from os import system as os_system  # only import what you need
 from os import name as os_name
+from random import random as random_random
 
 
 player = Player()
@@ -25,22 +26,37 @@ command_help = {'help': '[command] -- prints list of options or help on given co
 
 
 def create_world():
-    a = Room("room 1")
-    b = Trap("a trap room!")
-    c = Shop("Gregor's shop!")
-    d = Room("room 4")
-    Room.connect_rooms(a, "east", b, "west")
-    Room.connect_rooms(c, "east", d, "west")
-    Room.connect_rooms(a, "north", c, "south")
-    Room.connect_rooms(b, "north", d, "south")
-    i1 = Item("rock", "This is just a rock.")
-    i1.put_in_room(b)
-    i2 = Item('stick', 'it\'s a stick!')
-    i2.put_in_room(c)
-    # i3 = WinCondition('fake_scroll', 'for testing purposes')  # TODO: remove before final submission
-    # i3.put_in_room(a)
-    player.location = a
-    Guardian(100, d)
+    # temp names are location: 3x3 grid, 'sw' = southwest room
+    
+    nw = Shop('Gregor\'s shop!')
+    n = Room('the north room.')
+    ne = Lair('the scroll guardian\'s lair!')
+    w = Room('the west room.')
+    c = Room('the central room.')
+    e = Room('the east room.')
+    sw = Nest('the roamer\'s nest!')
+    s = Room('the south room.')
+    se = Trap('an entrapping room!')  # TODO: better name?
+    
+    # now I connect a lot of rooms...
+    Room.connect_rooms(nw, 'south', w, 'north')
+    Room.connect_rooms(w, 'south', sw, 'north')
+    Room.connect_rooms(w, 'east', c, 'west')
+    
+    Room.connect_rooms(ne, 'west', n, 'east')
+    Room.connect_rooms(n, 'south', c, 'north')
+    
+    Room.connect_rooms(se, 'north', e, 'south')
+    Room.connect_rooms(e, 'west', c, 'east')
+    
+    Room.connect_rooms(c, 'south', s, 'north')
+    
+    # dud items for the fun of it
+    Item('rock', 'just a rock').put_in_room(w)
+    Item('stick', 'it\'s a stick').put_in_room(n)
+    
+    player.location = s
+    
     for _ in range(2):
         updater.update_all()  # spawn a couple of random roamers to start the game
 
@@ -183,6 +199,8 @@ if __name__ == "__main__":
     while player.alive:
         print_situation()
         # I removed the `command_success` and second while loop in favor of a bunch of continue statements
+        # the updater triggers after a successful command, even if the command doesn't affect anything (like 'me')
+        # exceptions are 'help', 'about', and 'dev'
 
         original_command: str = input("What now? ('help' for list of options) ")  # sometimes this value is still needed
         clean_command: str = string_cleaner(original_command)
@@ -267,7 +285,6 @@ if __name__ == "__main__":
 
             case 'm' | 'me':
                 print_status_update('print(player)')
-                continue
 
             case 'i' | 'inv':
                 clear()
@@ -278,7 +295,6 @@ if __name__ == "__main__":
                 else:
                     print('You are currently carrying no items.')
                 enter_to_continue()
-                continue
 
             case 'h' | 'help':
                 if len(command_words) == 1:
@@ -368,6 +384,7 @@ if __name__ == "__main__":
                 usable_items: list[type[Item]] = [i for i in player.items if i.usable]  # list of all the `usable` items
             
                 if not usable_items:  # if the list is empty (no usable items)
+                    clear()
                     print('There are no usable items in your inventory.')
                     print('Usable items include: potions, armor, weapons, and scrolls.')
                     enter_to_continue()
@@ -375,7 +392,7 @@ if __name__ == "__main__":
                 
                 # else...
                 for index, item in enumerate(usable_items):
-                    print(str(index+1), item.name)  # note that this starts at 1, so other numbers are modified as such
+                    print(str(index+1), item)  # note that this starts at 1, so other numbers are modified as such
                 target_item_index: str = input('\nWhat would you like to use? (enter the item number) ')
                 
                 # this next part I had to do because if you call `int` on a non-int it'll throw an error, so instead
@@ -448,6 +465,7 @@ if __name__ == "__main__":
                 print('See all who helped make this game possible on the GitHub page:')
                 print('https://github.com/doranp-reed/text-adventure')
                 enter_to_continue()
+                continue
             
             case 's' | 'shop':
                 if player.location.room_type != 'shop':
@@ -508,7 +526,8 @@ if __name__ == "__main__":
                 continue
 
         # outside of the `match-case` block, but still in the `while` loop
-        updater.update_all()  # TODO: decide on how I want to do updating
+        if random_random() < 0.5:  # decide to make updates less frequent
+            updater.update_all()
     
     # outside of the `while` loop, but still in the `if __name__ == "__main__"` block
     if not player.alive:

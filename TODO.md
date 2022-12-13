@@ -70,7 +70,7 @@ should monsters move around a bunch, or should each room be more like a separate
 ## points (goal)
 ~~2 - weapons (comabat system as well)~~
 ~~2 - armor~~
-3 - more/different monsters (two or three normal types, maybe boss)
+~~3 - more/different monsters (two or three normal types, maybe boss)~~
 2 - bigger world
 ~~3 - loot~~
 ~~2 - healing potions~~
@@ -78,6 +78,7 @@ should monsters move around a bunch, or should each room be more like a separate
 <!-- 4 - save/load game? -->
 ~~? - about command (1)~~
 ~~1 - more comm. abbrev~~
+~~? - types of rooms? (not really its own thing but rather part of other things)~~
 
 # Now...
 add a way to bail from fights
