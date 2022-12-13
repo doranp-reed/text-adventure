@@ -98,9 +98,12 @@ change all item-accessing so you only need its number?
 
 ## necessary
 bigger world
-escaping combat
-more clarity in combat output
-entrapping monster
+~~escaping combat~~
+~~more clarity in combat output~~
+~~entrapping monster~~
+
+**update Modifications.md**
 
 ## ideal
 change item-accessing so everything is by number? (no names required)
+health assigned inside `__init__` or on monster creation?

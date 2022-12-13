@@ -4,7 +4,7 @@ from names import get_first_name
 from item import Weapon, Armor, Coins, Potion, WinCondition
 
 
-class Monster:  # base class
+class Monster:  # base class (this should never actually be created)
     monster_type = 'monster'
 
     def __init__(self, health: int, room: 'Room'):  # TODO: decide on if hints should be in arguments or values        
@@ -75,8 +75,8 @@ class Roamer(Monster):  # roamers are lower-health and move around
     monster_type = 'roamer'
     
     def move_to(self, room: 'Room'):
-        if room.has_merchant:  # monsters can't move into merchant room
-            return  # this does mean that monsters may "pile up" outside the merchant room , but I like that idea
+        if (room.room_type == 'shop') or (room.room_type == 'trap'):  # monsters can't move into merchant or trap room
+            return  # this does mean that roamers may "pile up" outside these rooms, but I like that idea
 
         self.location.remove_monster(self)
         self.location = room
@@ -87,10 +87,12 @@ class Roamer(Monster):  # roamers are lower-health and move around
 
 
 class Guardian(Monster):  # there is only one guardian, and it holds the win condition
+    monster_type = 'guardian'
     def __init__(self, health, room):
         self.health = health
         self.location: 'Room' = room
         self.name = get_first_name().lower()
+        self.max_health = health
         
         weapon_damage = random.randint(15, 25)  # TODO: balance this (this seems really unbalanced)
         weapon = Weapon(f'{self.name}_sword', f'a sword taken from the body of the scroll\'s guardian', weapon_damage)

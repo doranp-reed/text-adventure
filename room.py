@@ -1,17 +1,17 @@
 import random
 import updater
-from monster import Roamer
+from monster import Roamer, Entrapper
 
 
 class Room:
     valid_directions: list[str] = ['north', 'n', 'south', 's', 'east', 'e', 'west', 'w']
+    room_type = 'room'
     
     def __init__(self, desc: str):
         self.desc: str = desc
         self.monsters: list[type['Monster']] = []
         self.exits: list[list[str, 'Room']] = []
         self.items: list['Item'] = []
-        self.has_merchant: bool = False
         updater.register(self)
 
     def add_exit(self, exit_name: str, destination: 'Room'):
@@ -66,5 +66,29 @@ class Room:
         return random.choice(self.exits)[1]
     
     def update(self):
-        if (random.random() < .1) and self.has_merchant is False:  # monsters can't spawn in merchant room
+        if (random.random() < .1):
             Roamer(10, self)
+
+
+class Shop(Room):  # monsters can't spawn in here or move here, and has a merchant from whom the player can buy items
+    room_type = 'shop'  # TODO: make sure I'm passing 'Gregor's shop' to the __init__
+    
+    def update(self):
+        pass  # monsters don't spawn in shop
+
+
+class Trap(Room):  # player cannot leave until they've killed all of the entrappers in the room
+    room_type = 'trap'
+    
+    def __init__(self, desc: str):
+        super().__init__(desc)
+        for _ in range(3):
+            Entrapper(30, self)
+    
+    def update(self):
+        pass  # monsters don't spawn in trap room
+
+
+class Lair(Room):  # spawns a roamer every round
+    def update(self):
+        Roamer(10, self)

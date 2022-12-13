@@ -1,7 +1,7 @@
-from room import Room
+from room import Room, Shop, Trap
 from player import Player
 from item import Item, Weapon, Armor, Potion
-from monster import Monster
+from monster import Monster, Guardian
 import updater
 from time import sleep
 from os import system as os_system  # only import what you need
@@ -26,8 +26,8 @@ command_help = {'help': '[command] -- prints list of options or help on given co
 
 def create_world():
     a = Room("room 1")
-    b = Room("room 2")
-    c = Room("room 3")
+    b = Trap("a trap room!")
+    c = Shop("Gregor's shop!")
     d = Room("room 4")
     Room.connect_rooms(a, "east", b, "west")
     Room.connect_rooms(c, "east", d, "west")
@@ -40,8 +40,9 @@ def create_world():
     # i3 = WinCondition('fake_scroll', 'for testing purposes')  # TODO: remove before final submission
     # i3.put_in_room(a)
     player.location = a
-    c.has_merchant = True  # right now just hard-coding where the merchant is
-    Monster(20, b)
+    Guardian(100, d)
+    for _ in range(2):
+        updater.update_all()  # spawn a couple of random roamers to start the game
 
 
 def clear():
@@ -56,8 +57,6 @@ def enter_to_continue():  # If I ever decide to change the message, I only need 
 def print_situation():
     clear()
     print(f'You are in {player.location.desc}\n')
-    if player.location.has_merchant:
-        print('This room has Gregor the merchant!\n')
     if player.location.has_monsters():
         print("This room contains the following monsters:")
         for m in player.location.monsters:
@@ -210,6 +209,10 @@ if __name__ == "__main__":
                 if has_more_than_one_word('Please enter a direction to go.') is False:
                     continue
                 
+                if (player.location.room_type == 'trap') and player.location.has_monsters():  # trap room with monsters
+                    print_status_update('print("You can\'t leave - the entrappers are blocking your way!")')
+                    continue
+                
                 if not (command_words[1] in player.location.valid_directions):
                     print_status_update('print("That\'s not a valid direction! Go north, south, east, or west.")')
                     continue
@@ -303,7 +306,8 @@ if __name__ == "__main__":
                     print('\nWait, what? You\'re trying to fight the creator of this game?')
                     input('As you wish...')
                 
-                while True:
+                fighting = True
+                while fighting:
                     clear()
                     print(f'You are fighting {monster}.')
                     print(f'You have {player.health} health, {monster} has {monster.health} health.')
@@ -324,9 +328,20 @@ if __name__ == "__main__":
                         enter_to_continue()
                         break
                     # else...
-                    print(f'You attack {monster}. It attacks back!')
+                    print(f'You attack {monster}. It attacks back!\n')
+                    print(f'You now have {player.health} health, {monster} has {monster.health} health.')
+                    if player.location.room_type == 'trap':
+                        print('You must keep fighting: the entrapper won\'t let you get away!')
+                        enter_to_continue()
+                    else:
+                        while True:
+                            keep_fighting = input('Do you want to keep fighting? (Y/n) ')
+                            if keep_fighting.lower() == 'y' or keep_fighting.lower() == '':
+                                break  # this breaks out of the 'want to keep fighting?' loop, not the outer fight loop
+                            if keep_fighting.lower() == 'n':
+                                fighting = False
+                                break  # same comment here
                     # TODO: add a way of escaping combat, and make it clearer how much damage you take/deal
-                    enter_to_continue()
             
             case 'dev':  # for my testing (so I can see in real-time stuff like the player's hp)
                 my_command = original_command[4:]
@@ -368,7 +383,7 @@ if __name__ == "__main__":
                 valid_options: list[str] = [str(x+1) for x in range(len(usable_items))]
                 
                 if target_item_index not in valid_options:  # so it's not a number within the required range
-                    print(f'\\\"{target_item_index}\\\" is not a valid item number.')
+                    print(f'\"{target_item_index}\" is not a valid item number.')
                     enter_to_continue()
                     continue
                 
@@ -412,7 +427,7 @@ if __name__ == "__main__":
                         print('to learn this knowledge forbidden to mortals...\n')
                         sleep(5)
                         print('Congratulations! You have conquered the dungeon and learned the secrets of immortality!')
-                        sleep(0.5)
+                        sleep(1)
                         print('You win the game!')
                         sleep(1)
                         print('\nThe End')
@@ -435,7 +450,7 @@ if __name__ == "__main__":
                 enter_to_continue()
             
             case 's' | 'shop':
-                if not player.location.has_merchant:
+                if player.location.room_type != 'shop':
                     print_status_update("print('You are not in a room with a merchant, you cannot shop!')")
                     continue
                 # else...
