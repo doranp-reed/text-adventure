@@ -33,13 +33,12 @@ class Player:
     # goes in specified direction if possible, returns True
     # if not possible returns False
     def go_direction(self, direction: str):
-        old_location = self.location
         new_location = self.location.get_destination(direction.lower())
-        self.location = new_location
-        if new_location == old_location:  # so the player didn't move
+        if new_location is None:  # so there's no room in that direction
             return False
         # else...
-        return False
+        self.location = new_location
+        return True
 
     def pickup(self, item: 'Item'):
         if item.item_type == 'coins':

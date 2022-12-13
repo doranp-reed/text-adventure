@@ -198,9 +198,22 @@ if __name__ == "__main__":
         if (len(command_words) > 2) and command_words[0] != 'dev':
             print_status_update("print('Sorry, too many directions given.')")
             continue
+        
+        def has_more_than_one_word(message: str):  # check if enough words were used for a command
+            if len(command_words) < 2:
+                print_status_update(f'print("{message}")')  # ths string combination here is a bit wacky, but it works
+                return False
+            return True
 
         match command_words[0]:
             case 'g' | "go":
+                if has_more_than_one_word('Please enter a direction to go.') is False:
+                    continue
+                
+                if not (command_words[1] in player.location.valid_directions):
+                    print_status_update('print("That\'s not a valid direction! Go north, south, east, or west.")')
+                    continue
+                
                 okay = player.go_direction(command_words[1])
                 if not okay:
                     print_status_update('print("There\'s a wall there!")')
@@ -230,6 +243,9 @@ if __name__ == "__main__":
                         enter_to_continue()
 
             case 'd' | 'drop':
+                if has_more_than_one_word('Please enter an item to drop.') is False:
+                    continue
+                
                 target_name = command_words[1]
                 item: Item | bool = player.get_item_by_name(target_name)
                 if item is not False:
@@ -273,9 +289,7 @@ if __name__ == "__main__":
                 break  # breaks out of the `while player.alive` loop
 
             case 'f' | 'fight':
-                if len(command_words) == 1:
-                    print('Please enter a monster\'s name to fight.')
-                    enter_to_continue()
+                if has_more_than_one_word('Please enter a monster to fight.') is False:
                     continue
                 
                 target_name = command_words[1]
@@ -321,9 +335,9 @@ if __name__ == "__main__":
                 continue
             
             case 'l' | 'look':
-                if len(command_words) < 2:
-                    print_status_update('print("No item given to look at.")')
+                if has_more_than_one_word('Please enter an item to look at.') is False:
                     continue
+                
                 target_name = command_words[1]
                 item: type[Item] | bool = player.get_item_by_name(target_name)
                 if not item:  # so it's not in the inventory

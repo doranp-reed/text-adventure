@@ -103,6 +103,9 @@ class Guardian(Monster):  # there is only one guardian, and it holds the win con
         room.add_monster(self)
         updater.register(self)
     
+    def update(self):
+        self.health = self.max_health  # if you run away from the fight, it heals back to full
+    
     def die(self):
         # the item drops are big because this is the final boss: if the player wants to they can continue to play
         # with these powerful items, but they've already won the game so it's fine to make the items too strong

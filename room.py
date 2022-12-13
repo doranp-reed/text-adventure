@@ -4,6 +4,8 @@ from monster import Roamer
 
 
 class Room:
+    valid_directions: list[str] = ['north', 'n', 'south', 's', 'east', 'e', 'west', 'w']
+    
     def __init__(self, desc: str):
         self.desc: str = desc
         self.monsters: list[type['Monster']] = []
@@ -19,7 +21,7 @@ class Room:
         for e in self.exits:
             if (e[0] == direction) or (e[0][0] == direction):  # so you can do 'n' for 'north'
                 return e[1]
-        return self
+        return None
 
     @classmethod
     def connect_rooms(cls, room1: 'Room', dir1: str, room2: 'Room', dir2: str):
