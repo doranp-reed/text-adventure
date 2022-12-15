@@ -12,7 +12,7 @@ class Player:
         self.alive: bool = True
         self.name: str = 'Doran'  # this will never appear because it gets re-assigned at the start of the game
         self.weapon = Weapon('Doran_blade', 'a basic sword', 10)  # TODO: balance damage and stuff
-        self.armor = Armor('Doran_shield', 'a basic shield strapped to your body', 5)
+        self.armor = Armor('Doran_shield', 'a basic shield strapped to your body', 10)
         self.coins: int = 5
         updater.register(self)
 

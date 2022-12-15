@@ -1,7 +1,6 @@
 from room import Room, Shop, Trap, Nest, Lair
 from player import Player
 from item import Item, Weapon, Armor, Potion
-from monster import Monster
 import updater
 from time import sleep
 from os import system as os_system  # only import what you need
@@ -312,7 +311,7 @@ if __name__ == "__main__":
                     continue
                 
                 target_name = command_words[1]
-                monster: Monster | bool = player.location.get_monster_by_name(target_name)
+                monster: 'Monster | bool' = player.location.get_monster_by_name(target_name)
                 if monster is False:
                     print_status_update(f'print("There is no monster named \\\"{target_name}\\\" in this room.")')
                     continue
@@ -480,14 +479,19 @@ if __name__ == "__main__":
                 print('Here\'s what I\'ve got!\n')
                 # maybe sometime later I'd add the ability to sell to him, but right now you can just buy
                 
-                shop_weapon = Weapon('generic_sword', 'a sword bought from Gregor the merchant', 20)
-                shop_armor = Armor('generic_armor', 'armor bought from Gregot the merchant', 10)
+                basic_weapon = Weapon('generic_sword', 'a sword bought from Gregor the merchant', 20)
+                basic_armor = Armor('generic_armor', 'armor bought from Gregot the merchant', 20)
+                
+                super_weapon = Weapon('godly_sword', 'a mighty sword Gregor somehow has in stock', 30)
+                super_armor = Armor('godly_armor', 'mighty armor Gregor somehow has in stock', 30)
                 pot_15 = Potion(15)
                 pot_25 = Potion(25)
                 pot_35 = Potion(35)
                 
-                item_list: list[list[Item, int]] = [[shop_weapon, 50],
-                                                    [shop_armor, 50],
+                item_list: list[list[Item, int]] = [[basic_weapon, 50],
+                                                    [basic_armor, 50],
+                                                    [super_weapon, 200],
+                                                    [super_armor, 200],
                                                     [pot_15, 15],
                                                     [pot_25, 25],
                                                     [pot_35, 35]]

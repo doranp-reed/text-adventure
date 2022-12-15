@@ -6,19 +6,14 @@ from item import Weapon, Armor, Coins, Potion, WinCondition
 
 class Monster:  # base class (this should never actually be created)
     monster_type = 'monster'
-
-    def __init__(self, health: int, room: 'Room'):  # TODO: decide on if hints should be in arguments or values        
-        self.name: str = get_first_name().lower()
+    
+    # TODO: decide on if hints should be in arguments or values
+    def __init__(self, health: int, room: 'Room', weapon: Weapon, armor: Armor, name: str):
+        self.name: str = name
         self.health: int = health
         self.max_health: int = health  # monsters also passively heal
         self.location: 'Room' = room
-        
-        weapon_damage = random.randint(5, 12)
-        weapon = Weapon(f'{self.name}_sword', f'a sword taken from the body of {self.name}', weapon_damage)
         self.weapon: Weapon = weapon
-        
-        armor_value = random.randint(1, 8)
-        armor = Armor(f'{self.name}_armor', f'armor taken from the body of {self.name}', armor_value)
         self.armor: Armor = armor
         
         room.add_monster(self)
@@ -74,6 +69,17 @@ class Monster:  # base class (this should never actually be created)
 class Roamer(Monster):  # roamers are lower-health and move around
     monster_type = 'roamer'
     
+    def __init__(self, health: int, room: 'Room'):
+        name: str = get_first_name().lower()
+        
+        weapon_damage = random.randint(12, 20)
+        weapon = Weapon(f'{name}_sword', f'a sword taken from the body of {name}', weapon_damage)
+        
+        armor_value = random.randint(5, 10)
+        armor = Armor(f'{name}_armor', f'armor taken from the body of {name}', armor_value)
+        
+        super().__init__(health, room, weapon, armor, name)
+    
     def move_to(self, room: 'Room'):
         invalid_options = ['shop', 'trap', 'lair']
         if room.room_type in invalid_options:  # monsters can't move into most special rooms
@@ -90,22 +96,16 @@ class Roamer(Monster):  # roamers are lower-health and move around
 class Guardian(Monster):  # there is only one guardian, and it holds the win condition
     monster_type = 'guardian'
     
-    def __init__(self, health, room):
-        self.health = health
-        self.location: 'Room' = room
-        self.name = get_first_name().lower()
-        self.max_health = health
+    def __init__(self, health: int, room: 'Room'):
+        name: str = get_first_name().lower()
         
-        weapon_damage = random.randint(15, 25)  # TODO: balance this (this seems really unbalanced)
-        weapon = Weapon(f'{self.name}_sword', f'a sword taken from the body of the scroll\'s guardian', weapon_damage)
-        self.weapon: Weapon = weapon
+        weapon_damage = random.randint(25, 35)
+        weapon = Weapon(f'{name}_sword', f'a sword taken from the body of the scroll\'s guardian', weapon_damage)
 
-        armor_value = random.randint(10, 15)
-        armor = Armor(f'{self.name}_armor', f'armor taken from the body of the scroll\'s guardian', armor_value)
-        self.armor: Armor = armor
-
-        room.add_monster(self)
-        updater.register(self)
+        armor_value = 20
+        armor = Armor(f'{name}_armor', f'armor taken from the body of the scroll\'s guardian', armor_value)
+        
+        super().__init__(health, room, weapon, armor, name)
     
     def update(self):
         self.health = self.max_health  # if you run away from the fight, it heals back to full
@@ -118,8 +118,9 @@ class Guardian(Monster):  # there is only one guardian, and it holds the win con
         self.location.add_item(self.armor)
         for _ in range(3):
             self.location.add_item(Potion(100))
-
-        self.drop_coins()
+        
+        for _ in range(20):
+            self.drop_coins()
         
         self.location.add_item(WinCondition('scroll', 'This scroll contains potentially wonderous knowledge...'))
 
@@ -129,3 +130,19 @@ class Guardian(Monster):  # there is only one guardian, and it holds the win con
 
 class Entrapper(Monster):  # player can't run away from combat
     monster_type = 'entrapper'
+    
+    def __init__(self, health: int, room: 'Room'):
+        name: str = get_first_name().lower()
+        
+        weapon_damage = random.randint(20, 30)
+        weapon = Weapon(f'{name}_sword', f'a sword taken from the body of {name}', weapon_damage)
+        
+        armor_value = random.randint(10, 15)
+        armor = Armor(f'{name}_armor', f'armor taken from the body of {name}', armor_value)
+        
+        super().__init__(health, room, weapon, armor, name)
+    
+    def die(self):
+        super().die()
+        for _ in range(5):
+            self.drop_coins()  # these monsters drop a lot of coins
