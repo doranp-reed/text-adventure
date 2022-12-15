@@ -2,7 +2,7 @@
 Doran Penner
 
 To run this project, ensure that you have the `names` python package installed.
-Then, simple type:
+Then, simply type:
 ```
 % python3 main.py
 ```
